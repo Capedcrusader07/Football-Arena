@@ -1,0 +1,2909 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0b0b0d; --charcoal:#17171a; --panel:#1c1c20; --line:rgba(212,175,55,.16);
+    --gold:#d4af37; --gold-soft:#f0d78a; --gold-dim:#8a7126;
+    --white:#f6f5f1; --muted:#9a9aa2;
+    --emerald:#22c58b; --crimson:#e14b4b;
+    --glass: rgba(255,255,255,.04);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:
+      radial-gradient(220px 900px at 12% -6%, rgba(255,255,255,.06), transparent 55%),
+      radial-gradient(220px 900px at 88% -6%, rgba(255,255,255,.05), transparent 55%),
+      radial-gradient(1200px 600px at 15% -10%, rgba(212,175,55,.13), transparent 60%),
+      radial-gradient(1000px 500px at 110% 10%, rgba(34,197,139,.07), transparent 55%),
+      radial-gradient(900px 700px at 50% 120%, rgba(212,175,55,.06), transparent 60%),
+      radial-gradient(1400px 900px at 50% 50%, rgba(20,30,55,.35), transparent 70%),
+      repeating-linear-gradient(115deg, rgba(255,255,255,.012) 0px, rgba(255,255,255,.012) 1px, transparent 1px, transparent 60px),
+      repeating-radial-gradient(circle at 50% 100%, rgba(255,255,255,.02) 0px, transparent 2px, transparent 140px),
+      linear-gradient(180deg, #0a0d12 0%, #0b0b0d 40%, var(--black) 100%);
+    background-attachment:fixed;
+    color:var(--white); font-family:'Inter',sans-serif; min-height:100vh; position:relative;
+  }
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background:
+      linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.35) 100%),
+      radial-gradient(ellipse 900px 300px at 50% 100%, rgba(34,197,139,.05), transparent 70%);}
+  #app{position:relative; z-index:1;}
+  .stadium-particles{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0;}
+  .particle{position:absolute; top:100%; border-radius:50%; background:var(--gold-soft);
+    animation-name:particleRise; animation-timing-function:linear; animation-iteration-count:infinite;}
+  @keyframes particleRise{
+    0%{ transform:translateY(0) translateX(0); opacity:0; }
+    10%{ opacity:1; }
+    90%{ opacity:.6; }
+    100%{ transform:translateY(-105vh) translateX(20px); opacity:0; }
+  }
+  .disp{font-family:'Anton',sans-serif; letter-spacing:.03em; text-transform:uppercase; text-shadow:0 2px 14px rgba(212,175,55,.18);}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;height:8px;} ::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:8px;}
+  .glass{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+    border:1px solid var(--line); border-radius:18px; backdrop-filter: blur(14px);
+    box-shadow:0 14px 44px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05);
+    position:relative; overflow:hidden;}
+  .glass::before{content:'';position:absolute;inset:0;pointer-events:none;border-radius:18px;
+    background:linear-gradient(120deg, rgba(212,175,55,.06), transparent 30%, transparent 70%, rgba(212,175,55,.04));}
+  .btn{cursor:pointer; border:1px solid var(--line); border-radius:12px; padding:10px 18px; font-weight:700;
+    background:linear-gradient(180deg, #222226, var(--panel)); color:var(--white); transition:.18s ease; font-family:'Inter',sans-serif;
+    box-shadow:0 2px 8px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06);}
+  .btn:hover{transform:translateY(-2px); border-color:var(--gold); box-shadow:0 10px 26px rgba(212,175,55,.2), inset 0 1px 0 rgba(255,255,255,.08);}
+  .btn:active{transform:translateY(0);}
+  .btn-gold{background:linear-gradient(135deg,var(--gold-soft),var(--gold) 45%,#a9822a); color:#141400; border:none; box-shadow:0 4px 20px rgba(212,175,55,.3);}
+  .btn-gold:hover{box-shadow:0 12px 32px rgba(212,175,55,.45);}
+  .btn-ghost{background:transparent; box-shadow:none;}
+  .btn-danger{background:linear-gradient(135deg,var(--crimson),#8f2b2b); color:white; border:none;}
+  .btn-green{background:linear-gradient(135deg,var(--emerald),#177052); color:#04140d; border:none;}
+  .btn:disabled{opacity:.35; cursor:not-allowed; transform:none;box-shadow:none;}
+  input,select{background:#101012; border:1px solid var(--line); border-radius:10px; color:var(--white);
+    padding:10px 12px; font-family:'Inter',sans-serif; outline:none; width:100%; transition:.15s ease;}
+  input:focus,select:focus{border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.14);}
+  .container{max-width:1180px; margin:0 auto; padding:22px 18px 60px;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 22px;
+    border-bottom:1px solid var(--line); position:sticky; top:0; z-index:40;
+    background:rgba(11,11,13,.85); backdrop-filter:blur(12px);}
+  .brand{display:flex; align-items:center; gap:10px; font-size:20px;}
+  .brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#7a5f1c);
+    display:flex;align-items:center;justify-content:center;font-size:16px;color:#161200;}
+  .pill{padding:5px 12px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:var(--muted);}
+  .tabs{display:flex; gap:6px; flex-wrap:wrap; margin:18px 0;}
+  .tab{padding:9px 16px;border-radius:11px;border:1px solid var(--line);cursor:pointer;font-weight:600;font-size:14px;color:var(--muted);
+    transition:.18s ease; background:rgba(255,255,255,.02);}
+  .tab:hover{color:var(--white); border-color:rgba(212,175,55,.4);}
+  .tab.active{background:linear-gradient(135deg,rgba(212,175,55,.22),rgba(212,175,55,.05)); color:var(--gold-soft); border-color:var(--gold);
+    box-shadow:0 4px 16px rgba(212,175,55,.18);}
+  .grid{display:grid; gap:14px;}
+  .fade-in{animation:fadeIn .45s ease both;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
+  @keyframes pop{0%{transform:scale(.85);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1}}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(225,75,75,.55);} 70%{box-shadow:0 0 0 8px rgba(225,75,75,0);} 100%{box-shadow:0 0 0 0 rgba(225,75,75,0);}}
+  .live-dot{width:9px;height:9px;border-radius:50%;background:var(--crimson);display:inline-block;animation:pulse 1.6s infinite;margin-right:6px;}
+  .float{animation:float 4s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}}
+  .avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Anton',sans-serif; font-size:20px; border:2px solid var(--gold); flex-shrink:0;
+    box-shadow:0 0 0 4px rgba(212,175,55,.08), 0 0 30px rgba(212,175,55,.35);}
+  .badge{display:inline-block;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:700;}
+  .b-gk{background:rgba(212,175,55,.18);color:var(--gold-soft);}
+  .b-def{background:rgba(90,140,255,.18);color:#8fb2ff;}
+  .b-mid{background:rgba(34,197,139,.18);color:#7fe6c1;}
+  .b-fwd{background:rgba(225,75,75,.18);color:#ff9d9d;}
+  .timer-ring{position:relative; width:120px;height:120px;}
+  .bidrow{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.06);}
+  .scrolly{max-height:260px; overflow-y:auto;}
+  .toast{position:fixed;bottom:20px;right:20px;z-index:200;padding:14px 20px;border-radius:14px;
+    background:linear-gradient(135deg,#1a1a1e,#101012); border:1px solid var(--gold); box-shadow:0 12px 32px rgba(0,0,0,.5);
+    animation:slideIn .35s ease both; font-weight:600; max-width:320px;}
+  @keyframes slideIn{from{transform:translateX(120%)} to{transform:translateX(0)}}
+  .confetti-piece{position:fixed; top:-10px; width:8px;height:14px; z-index:300; border-radius:2px;}
+  @keyframes fall{to{transform:translateY(105vh) rotate(720deg); opacity:0;}}
+  .pitch{background:
+    repeating-linear-gradient(0deg, #0e3d24, #0e3d24 40px, #114a2c 40px, #114a2c 80px);
+    border-radius:16px; border:2px solid rgba(255,255,255,.15); position:relative; min-height:460px;}
+  .pitch-line{position:absolute; border:2px solid rgba(255,255,255,.28); border-radius:50%;}
+  .player-chip{width:78px;text-align:center;position:absolute;transform:translate(-50%,-50%);}
+  .player-chip .dot{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#7a5f1c);
+    margin:0 auto;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#161200;border:2px solid white;
+    box-shadow:0 0 14px rgba(212,175,55,.4); transition:.15s ease;}
+  .player-chip .dot:hover{transform:scale(1.08); box-shadow:0 0 20px rgba(212,175,55,.6);}
+  .slot-label{font-size:9px;color:var(--gold-soft);font-weight:800;letter-spacing:.04em;text-shadow:0 1px 3px black;}
+  .slot-name{font-size:10px;margin-top:2px;color:white;text-shadow:0 1px 3px black;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .slot-select{width:92px;font-size:10px;padding:4px 3px;background:#101012;border:1px solid var(--gold);border-radius:6px;color:var(--white);}
+  .bench-chip{display:flex;align-items:center;padding:6px 12px;border-radius:999px;background:var(--glass);
+    border:1px solid var(--line);font-size:12px;font-weight:600;}
+  .login-bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+  .login-bg::before{content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(420px 300px at 82% 22%, rgba(80,190,140,.16), transparent 65%),
+      radial-gradient(600px 420px at 8% 88%, rgba(90,55,30,.35), transparent 60%),
+      radial-gradient(600px 420px at 95% 92%, rgba(90,55,30,.32), transparent 60%),
+      radial-gradient(700px 500px at 50% 8%, rgba(120,80,35,.14), transparent 65%);
+    filter:blur(2px);}
+  .login-tv{position:absolute;top:10%;right:6%;width:34%;max-width:340px;aspect-ratio:16/10;border-radius:10px;
+    background:linear-gradient(160deg, rgba(60,140,90,.55), rgba(20,60,40,.6));
+    box-shadow:0 0 90px 20px rgba(90,200,140,.18), inset 0 0 40px rgba(0,0,0,.4);
+    filter:blur(6px); opacity:.7;}
+  .login-chip{position:absolute;border-radius:50%;font-family:'Anton',sans-serif;color:rgba(212,175,55,.28);
+    background:linear-gradient(135deg,rgba(212,175,55,.10),rgba(212,175,55,.02));
+    border:2px solid rgba(212,175,55,.18);display:flex;align-items:center;justify-content:center;
+    animation-name:float; animation-iteration-count:infinite; animation-timing-function:ease-in-out;}
+  .on-block-ribbon{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;color:#161200;
+    background:linear-gradient(135deg,var(--gold-soft),var(--gold));padding:4px 12px;border-radius:999px;
+    margin-bottom:14px; box-shadow:0 4px 14px rgba(212,175,55,.3);}
+  .spotlight-glow{position:absolute; inset:-24px; border-radius:50%;
+    background:radial-gradient(circle, rgba(212,175,55,.35) 0%, rgba(212,175,55,.12) 45%, transparent 72%);
+    animation:spotlightPulse 2.4s ease-in-out infinite; z-index:0;}
+  @keyframes spotlightPulse{0%,100%{opacity:.55; transform:scale(1);} 50%{opacity:.95; transform:scale(1.08);}}
+  .fut-card{position:relative; width:150px; flex-shrink:0; padding:16px 12px; border-radius:18px; text-align:center;
+    background:linear-gradient(160deg, #201a0d, #0e0e10 55%, #14110a); border:2px solid var(--gold);
+    box-shadow:0 12px 34px rgba(0,0,0,.55), 0 0 26px rgba(212,175,55,.25), inset 0 1px 0 rgba(255,255,255,.08);
+    transition:transform .12s ease-out; transform-style:preserve-3d; overflow:hidden; cursor:pointer;}
+  .fut-card-sheen{position:absolute; inset:0; border-radius:18px; pointer-events:none;
+    background:linear-gradient(115deg, transparent 25%, rgba(255,255,255,.16) 40%, rgba(255,255,255,.02) 55%, transparent 70%);
+    background-size:220% 220%; animation:sheenMove 4s ease-in-out infinite;}
+  @keyframes sheenMove{0%{background-position:220% 0;} 100%{background-position:-60% 100%;}}
+  .fut-rating{font-family:'Anton',sans-serif; font-size:34px; color:var(--gold-soft); line-height:1; margin-top:2px;}
+  .fut-pos{font-size:12px; font-weight:800; letter-spacing:.06em; color:var(--white); margin-top:2px;}
+  .fut-portrait{position:relative; margin:10px auto 6px;}
+  .fut-flagclub{display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; color:var(--muted); margin-top:4px;}
+  .fut-club-badge{padding:2px 7px; border-radius:6px; background:rgba(255,255,255,.08); font-size:10px; font-weight:700; letter-spacing:.04em;}
+  .fut-rarity{margin-top:10px; padding:4px 10px; border-radius:999px; font-size:10px; font-weight:800; letter-spacing:.08em; display:inline-block;}
+  .rarity-icon{background:linear-gradient(135deg,var(--gold-soft),var(--gold)); color:#161200;}
+  .rarity-prime{background:linear-gradient(135deg,#3a8bd8,#1c4f80); color:white;}
+  .rarity-current{background:linear-gradient(135deg,var(--emerald),#177052); color:#04140d;}
+  .rarity-ucl{background:linear-gradient(135deg,#1b2a6b,#0d1638); color:#cfe0ff; border:1px solid rgba(212,175,55,.5);}
+  .rarity-wonderkid{background:linear-gradient(135deg,#2bb3a3,#166a61); color:#04140d;}
+  .rarity-national{background:linear-gradient(135deg,var(--crimson),#8f2b2b); color:white;}
+  .attr-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:9px 16px; margin-top:14px;}
+  .attr-label{font-size:10.5px; color:var(--muted); font-weight:700; display:flex; justify-content:space-between; margin-bottom:3px; letter-spacing:.03em;}
+  .attr-val{color:var(--gold-soft);}
+  .pulse-red-timer{animation:pulseRedTimer 1s ease-in-out infinite;}
+  @keyframes pulseRedTimer{0%,100%{transform:scale(1);} 50%{transform:scale(1.08);}}
+  .mini-avatar{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;
+    background:linear-gradient(135deg,var(--gold),#7a5f1c);color:#161200;font-size:9px;font-weight:800;flex-shrink:0;}
+  .spinning-ball{display:inline-block; animation:spinBall 5s linear infinite, float 4s ease-in-out infinite; filter:drop-shadow(0 6px 14px rgba(212,175,55,.35));}
+  .login-shimmer{position:relative;}
+  .login-shimmer::after{content:'';position:absolute;inset:-1px;border-radius:18px;padding:1px;pointer-events:none;
+    background:linear-gradient(120deg, transparent, rgba(212,175,55,.9), transparent 40%);
+    background-size:250% 250%; animation:borderShimmer 3.2s linear infinite;
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;}
+  @keyframes borderShimmer{0%{background-position:0% 0%;} 100%{background-position:100% 100%;}}
+  .sparkle{position:absolute; color:var(--gold-soft); font-size:20px; opacity:.7; animation:sparkleTwinkle 2.4s ease-in-out infinite; pointer-events:none;}
+  @keyframes sparkleTwinkle{0%,100%{opacity:.2; transform:scale(.8) rotate(0deg);} 50%{opacity:.9; transform:scale(1.2) rotate(20deg);}}
+  .input-icon-wrap{position:relative;}
+  .input-icon{position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:15px; opacity:.7; pointer-events:none;}
+  @keyframes spinBall{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
+  .tactical-board{position:relative; overflow:hidden;}
+  .tactical-board::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background:
+      repeating-linear-gradient(0deg, rgba(34,197,139,.05) 0px, rgba(34,197,139,.05) 1px, transparent 1px, transparent 34px),
+      repeating-linear-gradient(90deg, rgba(34,197,139,.05) 0px, rgba(34,197,139,.05) 1px, transparent 1px, transparent 34px);}
+  .tactical-board::after{content:'';position:absolute; left:50%; top:50%; width:90px; height:90px; margin:-45px 0 0 -45px;
+    border:1.5px solid rgba(34,197,139,.15); border-radius:50%; pointer-events:none;}
+  .bid-flash{animation:bidFlash .6s ease;}
+  @keyframes bidFlash{0%{text-shadow:0 0 0 rgba(34,197,139,0);} 30%{text-shadow:0 0 22px rgba(34,197,139,.9); color:var(--emerald) !important;} 100%{text-shadow:0 0 0 rgba(34,197,139,0);}}
+  label.small{font-size:12px; color:var(--muted); display:block; margin-bottom:4px; font-weight:600;}
+  .field{margin-bottom:12px;}
+  ::placeholder{color:#5c5c63;}
+  .link{color:var(--gold-soft); cursor:pointer; text-decoration:underline;}
+  .statbox{padding:14px; border-radius:14px; background:var(--glass); border:1px solid var(--line); text-align:center;}
+  .statbox .v{font-family:'Anton',sans-serif; font-size:26px; color:var(--gold-soft);}
+  .statbox .l{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+  .award{padding:14px; border-radius:14px; background:linear-gradient(135deg,rgba(212,175,55,.10),transparent); border:1px solid var(--line);}
+  .rating-bar{height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;}
+  .rating-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-soft));border-radius:4px;transition:width .5s ease;}
+  .lobby-card{transition:.25s ease;}
+  .lobby-card:hover{transform:translateY(-4px); box-shadow:0 20px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(212,175,55,.15);}
+  @media (max-width:760px){
+    .grid{grid-template-columns:1fr !important;}
+    .container{padding:14px 10px 50px;}
+    .topbar{padding:10px 12px;flex-wrap:wrap;gap:8px;}
+    .topbar .brand{font-size:15px;flex-wrap:wrap;}
+    .tabs{gap:5px;}
+    .tab{padding:7px 11px;font-size:12px;}
+    .timer-ring{width:96px !important;height:96px !important;}
+    .timer-ring svg{width:96px;height:96px;}
+    .pitch{min-height:340px;}
+    .player-chip{width:52px !important;}
+    .player-chip .dot{width:32px;height:32px;font-size:10px;}
+    .slot-label{font-size:8px;}
+    .slot-name{font-size:8px;}
+    .slot-select{width:70px;font-size:9px;}
+    .avatar{width:80px !important;height:80px !important;font-size:24px !important;}
+    .disp{letter-spacing:.01em;}
+    .login-chip{display:none;}
+    .login-chip:nth-child(-n+3){display:flex;}
+  }
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<div class="stadium-particles" id="stadiumParticles"></div>
+<div id="app"></div>
+<script>
+  (function(){
+    const layer = document.getElementById('stadiumParticles');
+    const n = 22;
+    for(let i=0;i<n;i++){
+      const d = document.createElement('div');
+      d.className='particle';
+      d.style.left = (Math.random()*100)+'vw';
+      d.style.animationDuration = (14+Math.random()*16)+'s';
+      d.style.animationDelay = (-Math.random()*20)+'s';
+      const s = 1.5+Math.random()*2.5;
+      d.style.width=s+'px'; d.style.height=s+'px';
+      d.style.opacity = (0.15+Math.random()*0.25).toFixed(2);
+      layer.appendChild(d);
+    }
+  })();
+</script>
+
+<script>
+/* ---------------------------- DATA ---------------------------- */
+const FORMATS = {
+  icons:        {label:"🏆 Icons XI", budget:1000000000, squad:16, squadMin:15, squadMax:18, timer:25, pitchSize:11},
+  primeLaLiga:  {label:"🇪🇸 Prime LaLiga XI", budget:750000000, squad:16, squadMin:15, squadMax:18, timer:25, pitchSize:11},
+  primePL:      {label:"🏴 Prime Premier League XI", budget:900000000, squad:16, squadMin:15, squadMax:18, timer:25, min:850000000, max:1000000000, tunable:true, pitchSize:11},
+  currentLaLiga:{label:"🇪🇸 Current LaLiga XI", budget:450000000, squad:16, squadMin:15, squadMax:18, timer:20, pitchSize:11},
+  currentPL:    {label:"🏴 Current Premier League XI", budget:600000000, squad:16, squadMin:15, squadMax:18, timer:20, pitchSize:11},
+  primeUCL:     {label:"🏆 Prime UCL XI", budget:700000000, squad:16, squadMin:15, squadMax:18, timer:25, min:650000000, max:750000000, tunable:true, pitchSize:11},
+  currentUCL:   {label:"⭐ Current UCL XI", budget:475000000, squad:16, squadMin:15, squadMax:18, timer:20, min:450000000, max:500000000, tunable:true, pitchSize:11},
+  five:         {label:"⚽ 5-a-Side", budget:100000000, squad:6, squadMin:5, squadMax:8, timer:15, pitchSize:5},
+  seven:        {label:"⚽ 7-a-Side", budget:170000000, squad:8, squadMin:7, squadMax:10, timer:18, pitchSize:7},
+  custom:       {label:"⚙ Custom Mode", budget:500000000, squad:16, squadMin:5, squadMax:18, timer:20, tunable:true}
+};
+
+function randomStartPrice(rating, cat){
+  return (3 + Math.floor(Math.random()*3))*1000000; // 3-5M flat starting price for everyone
+}
+// Curated real-world detailed positions for well-known players (keyed by base name, i.e.
+// with any "(Prime)"/"(Icon)"/etc. tag stripped) — covers the vast majority of recognizable
+// cards since many repeat across eras. Anyone not listed here falls back to a deterministic,
+// foot-aware guess that's always kept consistent with their broad pos (GK/DEF/MID/FWD).
+const DETAIL_POS_OVERRIDES = {
+  "Ronaldinho":"LW","Zinedine Zidane":"CAM","Cristiano Ronaldo":"LW","Lionel Messi":"RW",
+  "Ronaldo Nazário":"ST","Diego Maradona":"CF","Pelé":"CF","Johan Cruyff":"CF",
+  "Thierry Henry":"ST","Luis Suárez":"ST","Karim Benzema":"ST","Neymar Jr":"LW",
+  "Vinícius Júnior":"LW","Kylian Mbappé":"LW","Erling Haaland":"ST","Robert Lewandowski":"ST",
+  "Harry Kane":"ST","Zlatan Ibrahimović":"ST","Didier Drogba":"ST","Samuel Eto'o":"ST","Eto'o":"ST",
+  "David Villa":"ST","Fernando Torres":"ST","Wayne Rooney":"CF","Michael Owen":"ST",
+  "Alan Shearer":"ST","Ian Wright":"ST","Ronaldo":"ST","Raúl González":"ST","Raúl":"ST",
+  "Gabriel Batistuta":"ST","Hernán Crespo":"ST","Diego Forlán":"ST","Gonzalo Higuaín":"ST",
+  "Julián Álvarez":"CF","Julian Alvarez":"CF","Antoine Griezmann":"CF","Marco van Basten":"ST",
+  "Ruud van Nistelrooy":"ST","Filippo Inzaghi":"ST","Paolo Rossi":"ST","Gerd Müller":"ST",
+  "Jürgen Klinsmann":"ST","Karl-Heinz Rummenigge":"ST","Ferenc Puskás":"ST","Eusébio":"ST",
+  "George Weah":"ST","Emmanuel Adebayor":"ST","Christian Vieri":"ST","Hugo Sánchez":"ST",
+  "Iván Zamorano":"ST","Dwight Yorke":"ST","Andy Cole":"ST","Robbie Fowler":"ST","Robbie Keane":"ST",
+  "Kenny Dalglish":"ST","Geoff Hurst":"ST","Emile Heskey":"ST","Les Ferdinand":"ST",
+  "Nicolas Anelka":"ST","Sylvain Wiltord":"ST","Just Fontaine":"ST","Sándor Kocsis":"ST",
+  "Preben Elkjær":"ST","Predrag Mijatović":"ST","Patrick Kluivert":"ST","Bebeto":"ST",
+  "Ole Gunnar Solskjær":"ST","Danny Welbeck":"ST","Chris Wood":"ST","Dominic Solanke":"ST",
+  "Ollie Watkins":"ST","Alexander Isak":"ST","Alexander Sørloth":"ST","Victor Osimhen":"ST",
+  "Victor Boniface":"ST","Serhou Guirassy":"ST","Nicolas Jackson":"ST","Marcus Thuram":"ST",
+  "Randal Kolo Muani":"ST","Rasmus Højlund":"ST","Wout Weghorst":"ST","Yoane Wissa":"ST",
+  "Evan Ferguson":"ST","Endrick":"ST","Deivid Washington":"ST","Samu Omorodion":"ST",
+  "Pau Víctor":"ST","Gonçalo Ramos":"ST","Artem Dovbyk":"ST","Ayoze Pérez":"ST",
+  "Sonny Anderson":"ST","Emilio Butragueño":"ST","Kai Havertz":"CF",
+  "Lautaro Martínez":"ST","Ferran Torres":"RW","Federico Chiesa":"RW","Ousmane Dembélé":"RW",
+  "Bukayo Saka":"RW","Mohamed Salah":"RW","Riyad Mahrez":"RW","Raphinha":"RW","Hakim Ziyech":"RW",
+  "Serge Gnabry":"RW","Ángel Di María":"RW","Ángel Correa":"RW","Luís Figo":"RW","David Beckham":"RW",
+  "Garrincha":"RW","Jairzinho":"RW","Amancio Amaro":"RW","Steve McManaman":"RW","Freddie Ljungberg":"RW",
+  "George Best":"RW","Arjen Robben":"RW","Michael Olise":"RW","Bryan Mbeumo":"RW","Bryan Zaragoza":"RW",
+  "Yeremy Pino":"RW","Takefusa Kubo":"RW","Franco Mastantuono":"RW","Estêvão Willian":"RW",
+  "Luis Guilherme":"RW","Geovany Quenda":"RW","Iñaki Williams":"RW","Hirving Lozano":"RW",
+  "Antonio Nusa":"RW","Max Dowman":"RW","Lamine Yamal":"RW",
+  "Franck Ribéry":"LW","Hristo Stoichkov":"LW","Rivaldo":"LW","Ryan Giggs":"LW","Sadio Mané":"LW",
+  "Son Heung-min":"LW","Robert Pirès":"LW","Marc Overmars":"LW","Rob Rensenbrink":"LW",
+  "Mário Zagallo":"LW","Pavel Nedvěd":"LW","Wilfried Zaha":"LW","Kingsley Coman":"LW",
+  "Leroy Sané":"LW","Luis Díaz":"LW","Khvicha Kvaratskhelia":"LW","Kaoru Mitoma":"LW",
+  "Jeremy Doku":"LW","Christian Pulisic":"LW","Ansu Fati":"LW","Anthony Gordon":"LW",
+  "Alejandro Garnacho":"LW","Jamie Gittens":"LW","Justin Kluivert":"LW","Malick Fofana":"LW",
+  "Désiré Doué":"LW","Kenan Yıldız":"LW","Samuel Lino":"LW","Morgan Rogers":"LW","Nico Williams":"LW",
+  "Mikel Oyarzabal":"LW","Luis Enrique":"RW",
+  "Kevin De Bruyne":"CAM","Jude Bellingham":"CAM","Martin Ødegaard":"CAM","Bruno Fernandes":"CAM",
+  "Mesut Özil":"CAM","Michel Platini":"CAM","Gheorghe Hagi":"CAM","Rui Costa":"CAM","Kaká":"CAM",
+  "Francesco Totti":"CF","Alessandro Del Piero":"CF","Roberto Baggio":"CF","Dennis Bergkamp":"CF",
+  "Eric Cantona":"CF","Ruud Gullit":"CF","Teddy Sheringham":"CF","Nándor Hidegkuti":"CF","Tostão":"CF",
+  "Phil Foden":"CAM","Cole Palmer":"CAM","Florian Wirtz":"CAM","Jamal Musiala":"CAM","Arda Güler":"CAM",
+  "Dominik Szoboszlai":"CAM","James Maddison":"CAM","Dani Olmo":"CAM","Brahim Díaz":"CAM",
+  "Nico Paz":"CAM","Isco":"CAM","Gianfranco Zola":"CAM","Xherdan Shaqiri":"CAM","Zico":"CAM",
+  "Sócrates":"CAM","Socrates":"CAM","Falcão":"CAM","Deco":"CAM","Giovani Lo Celso":"CAM",
+  "Mohammed Kudus":"CAM","Morgan Gibbs-White":"CAM","Piotr Zieliński":"CAM","Oihan Sancet":"CAM",
+  "Facundo Buonanotte":"CAM","Rodrigo Mora":"CAM","Claudio Echeverri":"CAM","Kendry Páez":"CAM",
+  "Ethan Nwaneri":"CAM","Konstantinos Karetsas":"CAM","Bobby Charlton":"CAM","Youri Djorkaeff":"CAM",
+  "Geovanni":"CAM","Peter Beardsley":"CAM","Míchel":"CAM","Álex Baena":"CAM","Luis Suárez Miramontes":"CAM",
+  "Andrés Iniesta":"CM","Xavi Hernández":"CM","Xavi":"CM","Toni Kroos":"CM","Luka Modrić":"CM",
+  "Frenkie de Jong":"CM","Pedri":"CM","Gavi":"CM","Fede Valverde":"CM","Federico Valverde":"CM",
+  "Bruno Guimarães":"CM","Fabián Ruiz":"CM","Enzo Fernández":"CM","Rodrigo De Paul":"CM",
+  "Fermín López":"CM","Vitinha":"CM","Warren Zaïre-Emery":"CM","Kobbie Mainoo":"CM",
+  "Alexis Mac Allister":"CM","Aleix García":"CM","Konrad Laimer":"CM","Marco Verratti":"CM",
+  "Lothar Matthäus":"CM","Frank Lampard":"CM","Steven Gerrard":"CM","Paul Scholes":"CM",
+  "Michael Carrick":"CM","Cesc Fàbregas":"CM","Yaya Touré":"CM","Clarence Seedorf":"CM",
+  "Demetrio Albertini":"CM","Esteban Cambiasso":"CM","Ray Parlour":"CM","Bastian Schweinsteiger":"CM",
+  "Roy Keane":"CM","Marcos Llorente":"CM","Mikel Merino":"CM","Mateo Kovačić":"CM","Koke":"CM",
+  "Lamine Camara":"CM","Lucas Bergvall":"CM","Weston McKennie":"CM","Nicolò Barella":"CM",
+  "Gaizka Mendieta":"CM","József Bozsik":"CM","Diego Simeone":"CM","Archie Gray":"CM",
+  "Youri Tielemans":"CM","Fabio Capello":"CM","Christian Karembeu":"CM","Bobby Robson":"CM",
+  "Casemiro":"CDM","Sergio Busquets":"CDM","Rodri":"CDM","Declan Rice":"CDM","N'Golo Kanté":"CDM",
+  "Claude Makélélé":"CDM","Patrick Vieira":"CDM","Edgar Davids":"CDM","Emmanuel Petit":"CDM",
+  "Didier Deschamps":"CDM","Frank Rijkaard":"CDM","Fernando Redondo":"CDM","Xabi Alonso":"CDM",
+  "Joshua Kimmich":"CDM","Granit Xhaka":"CDM","Thomas Partey":"CDM","Aurélien Tchouaméni":"CDM",
+  "Moisés Caicedo":"CDM","Martín Zubimendi":"CDM","Edson Álvarez":"CDM","Sofyan Amrabat":"CDM",
+  "Gabriel Moscardo":"CDM","Michael Essien":"CDM","Andrea Pirlo":"CDM","Josep Guardiola":"CDM",
+  "Assan Ouedraogo":"CM","Nobby Stiles":"CDM",
+  "Alphonso Davies":"LB","Andrew Robertson":"LB","Ashley Cole":"LB","Marcelo":"LB","Roberto Carlos":"LB",
+  "Paolo Maldini":"LB","Nuno Mendes":"LB","Theo Hernández":"LB","Ferland Mendy":"LB","Federico Dimarco":"LB",
+  "Giovanni van Bronckhorst":"LB","Nílton Santos":"LB","Antonee Robinson":"LB","Pervis Estupiñán":"LB",
+  "Myles Lewis-Skelly":"LB","Achraf Hakimi":"RB","Dani Carvajal":"RB","Kyle Walker":"RB",
+  "Trent Alexander-Arnold":"RB","Gary Neville":"RB","Djalma Santos":"RB","Carlos Alberto":"RB",
+  "Javier Zanetti":"RB","Gianluca Zambrotta":"RB","Denzel Dumfries":"RB","Pedro Porro":"RB",
+  "Rico Lewis":"RB","Matty Cash":"RB","Tino Livramento":"RB","Míchel Salgado":"RB",
+  "Sergio Ramos":"CB","Virgil van Dijk":"CB","Rio Ferdinand":"CB","John Terry":"CB","Tony Adams":"CB",
+  "Franco Baresi":"CB","Franz Beckenbauer":"CB","Fabio Cannavaro":"CB","Alessandro Nesta":"CB",
+  "Carles Puyol":"CB","Gerard Piqué":"CB","Iñigo Martínez":"CB","Aymeric Laporte":"CB",
+  "Jules Koundé":"CB","Ronald Koeman":"CB","Marcel Desailly":"CB","William Gallas":"CB",
+  "William Saliba":"CB","Rúben Dias":"CB","Ruben Dias":"CB","Éder Militão":"CB","Antonio Rüdiger":"CB",
+  "Josko Gvardiol":"CB","Kim Min-jae":"CB","Marquinhos":"CB","Nathan Aké":"CB","Nicolás Otamendi":"CB",
+  "Nemanja Vidić":"CB","Vincent Kompany":"CB","Jaap Stam":"CB","Sol Campbell":"CB","Martin Keown":"CB",
+  "Joel Matip":"CB","Jonny Evans":"CB","Levi Colwill":"CB","Micky van de Ven":"CB","Pau Cubarsí":"CB",
+  "José María Giménez":"CB","Dean Huijsen":"CB","Robin Le Normand":"CB","Jorrel Hato":"CB",
+  "Diego Coppola":"CB","Aitor Karanka":"CB","Elías Figueroa":"CB","Gaetano Scirea":"CB",
+  "Frank de Boer":"CB","Bobby Moore":"CB","Bobby Moncur":"CB",
+  "Iker Casillas":"GK","Gianluigi Buffon":"GK","Manuel Neuer":"GK","Thibaut Courtois":"GK",
+  "Alisson Becker":"GK","Ederson":"GK","Jan Oblak":"GK","Marc-André ter Stegen":"GK",
+  "Emiliano Martínez":"GK","David Raya":"GK","David Seaman":"GK","David James":"GK",
+  "Peter Schmeichel":"GK","Petr Čech":"GK","Edwin van der Sar":"GK","Dino Zoff":"GK",
+  "Lev Yashin":"GK","Gordon Banks":"GK","Gordon West":"GK","Andoni Zubizarreta":"GK",
+  "Gianluigi Donnarumma":"GK","Jordan Pickford":"GK","Mike Maignan":"GK","Yann Sommer":"GK",
+  "Yassine Bounou":"GK","Unai Simón":"GK","Keylor Navas":"GK","Kevin Trapp":"GK",
+};
+function stripTag(name){ return name.replace(/\s*\([^)]*\)\s*$/,'').trim(); }
+const DETAIL_POS_GROUPS = { GK:['GK'], DEF:['CB','LB','RB'], MID:['CDM','CM','CAM'], FWD:['ST','LW','RW','CF'] };
+function detailPosFor(pos, foot, name){
+  const group = DETAIL_POS_GROUPS[pos] || [pos];
+  const guess = DETAIL_POS_OVERRIDES[stripTag(name)];
+  if(guess && group.includes(guess)) return guess; // only trust the curated guess if it fits the player's real broad position
+  if(group.length===1) return group[0];
+  const h = [...name].reduce((a,c)=>a+c.charCodeAt(0),0);
+  if(pos==='DEF') return (foot==='Left'? ['LB','CB','CB'] : foot==='Right'? ['RB','CB','CB'] : ['CB','CB','CB'])[h%3];
+  if(pos==='MID') return group[h%group.length];
+  if(pos==='FWD') return (foot==='Left'? ['RW','ST','CF'] : foot==='Right'? ['LW','ST','CF'] : ['ST','CF','ST'])[h%3];
+  return group[0];
+}
+function P(name,rating,pos,club,nation,flag,age,foot,height,value,cat){
+  return {id:name.replace(/[^a-zA-Z]/g,'')+rating, name,rating,pos,detailPos:detailPosFor(pos,foot,name),
+    club,nation,flag,age,foot,height,value,cat,
+    start: randomStartPrice(rating, cat)};
+}
+const M=1000000;
+const PLAYERS = [
+  // Icons / Legends
+  P("Ronaldinho",94,"FWD","Retired","Brazil","🇧🇷",44,"Right",181,120*M,"Icons"),
+  P("Zinedine Zidane",95,"MID","Retired","France","🇫🇷",53,"Right",185,130*M,"Icons"),
+  P("Ronaldo Nazário",96,"FWD","Retired","Brazil","🇧🇷",49,"Right",183,140*M,"Icons"),
+  P("Paolo Maldini",93,"DEF","Retired","Italy","🇮🇹",57,"Left",186,110*M,"Icons"),
+  P("Andrés Iniesta",92,"MID","Retired","Spain","🇪🇸",42,"Right",171,105*M,"Icons"),
+  P("Thierry Henry",93,"FWD","Retired","France","🇫🇷",48,"Right",188,115*M,"Icons"),
+  P("Roberto Carlos",91,"DEF","Retired","Brazil","🇧🇷",53,"Left",168,95*M,"Icons"),
+  P("Xavi Hernández",92,"MID","Retired","Spain","🇪🇸",46,"Right",170,100*M,"Icons"),
+  P("Diego Maradona",97,"FWD","Retired","Argentina","🇦🇷",'-',"Left",165,150*M,"Icons"),
+  P("Pelé",97,"FWD","Retired","Brazil","🇧🇷",'-',"Right",173,150*M,"Icons"),
+  P("Franz Beckenbauer",93,"DEF","Retired","Germany","🇩🇪",'-',"Right",181,105*M,"Icons"),
+  P("Johan Cruyff",95,"FWD","Retired","Netherlands","🇳🇱",'-',"Right",178,120*M,"Icons"),
+  P("Gianluigi Buffon",92,"GK","Retired","Italy","🇮🇹",46,"Right",192,100*M,"Icons"),
+  P("Iker Casillas",90,"GK","Retired","Spain","🇪🇸",44,"Right",182,85*M,"Icons"),
+  P("Didier Drogba",90,"FWD","Retired","Ivory Coast","🇨🇮",47,"Right",190,90*M,"Icons"),
+  P("Frank Lampard",89,"MID","Retired","England","🏴",47,"Right",184,80*M,"Icons"),
+  P("Steven Gerrard",90,"MID","Retired","England","🏴",45,"Right",183,88*M,"Icons"),
+  P("Ryan Giggs",89,"MID","Retired","Wales","🏴",52,"Left",180,78*M,"Icons"),
+  P("Kaká",91,"MID","Retired","Brazil","🇧🇷",43,"Right",186,92*M,"Icons"),
+  P("Samuel Eto'o",89,"FWD","Retired","Cameroon","🇨🇲",44,"Right",180,82*M,"Icons"),
+  // Prime LaLiga
+  P("Lionel Messi (Prime)",98,"FWD","Barcelona","Argentina","🇦🇷",30,"Left",170,180*M,"Prime LaLiga"),
+  P("Cristiano Ronaldo (Prime)",98,"FWD","Real Madrid","Portugal","🇵🇹",29,"Right",187,175*M,"Prime LaLiga"),
+  P("Luis Suárez (Prime)",93,"FWD","Barcelona","Uruguay","🇺🇾",29,"Right",182,90*M,"Prime LaLiga"),
+  P("Sergio Ramos (Prime)",92,"DEF","Real Madrid","Spain","🇪🇸",29,"Right",184,85*M,"Prime LaLiga"),
+  P("Karim Benzema (Prime)",91,"FWD","Real Madrid","France","🇫🇷",28,"Right",185,80*M,"Prime LaLiga"),
+  P("Toni Kroos (Prime)",90,"MID","Real Madrid","Germany","🇩🇪",27,"Right",183,75*M,"Prime LaLiga"),
+  P("Luka Modrić (Prime)",91,"MID","Real Madrid","Croatia","🇭🇷",30,"Right",172,78*M,"Prime LaLiga"),
+  P("Neymar Jr (Prime)",92,"FWD","Barcelona","Brazil","🇧🇷",23,"Right",175,95*M,"Prime LaLiga"),
+  P("Sergio Busquets (Prime)",89,"MID","Barcelona","Spain","🇪🇸",26,"Right",189,65*M,"Prime LaLiga"),
+  P("Gerard Piqué (Prime)",88,"DEF","Barcelona","Spain","🇪🇸",28,"Right",194,60*M,"Prime LaLiga"),
+  P("Marcelo (Prime)",88,"DEF","Real Madrid","Brazil","🇧🇷",27,"Left",174,58*M,"Prime LaLiga"),
+  // Current LaLiga
+  P("Jude Bellingham",90,"MID","Real Madrid","England","🏴",22,"Right",186,180*M,"Current LaLiga"),
+  P("Vinícius Júnior",91,"FWD","Real Madrid","Brazil","🇧🇷",25,"Right",176,200*M,"Current LaLiga"),
+  P("Robert Lewandowski",89,"FWD","Barcelona","Poland","🇵🇱",36,"Right",185,35*M,"Current LaLiga"),
+  P("Pedri",87,"MID","Barcelona","Spain","🇪🇸",23,"Right",174,100*M,"Current LaLiga"),
+  P("Lamine Yamal",89,"FWD","Barcelona","Spain","🇪🇸",18,"Left",180,180*M,"Current LaLiga"),
+  P("Antoine Griezmann",86,"FWD","Atlético Madrid","France","🇫🇷",34,"Left",176,25*M,"Current LaLiga"),
+  P("Thibaut Courtois",90,"GK","Real Madrid","Belgium","🇧🇪",33,"Left",199,50*M,"Current LaLiga"),
+  P("Fede Valverde",88,"MID","Real Madrid","Uruguay","🇺🇾",26,"Right",182,120*M,"Current LaLiga"),
+  P("Dani Carvajal",85,"DEF","Real Madrid","Spain","🇪🇸",33,"Right",173,15*M,"Current LaLiga"),
+  P("Gavi",85,"MID","Barcelona","Spain","🇪🇸",21,"Right",173,90*M,"Current LaLiga"),
+  // Prime Premier League
+  P("Thierry Henry (Prime)",96,"FWD","Arsenal","France","🇫🇷",26,"Right",188,130*M,"Prime PL"),
+  P("Cristiano Ronaldo (PL Prime)",93,"FWD","Man United","Portugal","🇵🇹",22,"Right",187,110*M,"Prime PL"),
+  P("Steven Gerrard (Prime)",92,"MID","Liverpool","England","🏴",26,"Right",183,95*M,"Prime PL"),
+  P("Didier Drogba (Prime)",91,"FWD","Chelsea","Ivory Coast","🇨🇮",29,"Right",190,88*M,"Prime PL"),
+  P("Patrick Vieira (Prime)",90,"MID","Arsenal","France","🇫🇷",28,"Right",193,75*M,"Prime PL"),
+  P("Rio Ferdinand (Prime)",89,"DEF","Man United","England","🏴",27,"Right",189,65*M,"Prime PL"),
+  P("Petr Čech (Prime)",90,"GK","Chelsea","Czech Republic","🇨🇿",26,"Right",196,70*M,"Prime PL"),
+  P("Wayne Rooney (Prime)",91,"FWD","Man United","England","🏴",24,"Right",178,92*M,"Prime PL"),
+  P("Vincent Kompany (Prime)",88,"DEF","Man City","Belgium","🇧🇪",27,"Right",193,60*M,"Prime PL"),
+  P("Yaya Touré (Prime)",89,"MID","Man City","Ivory Coast","🇨🇮",29,"Right",193,62*M,"Prime PL"),
+  // Current Premier League
+  P("Erling Haaland",92,"FWD","Man City","Norway","🇳🇴",25,"Left",195,190*M,"Current PL"),
+  P("Mohamed Salah",90,"FWD","Liverpool","Egypt","🇪🇬",33,"Left",175,55*M,"Current PL"),
+  P("Kevin De Bruyne",90,"MID","Man City","Belgium","🇧🇪",33,"Right",181,30*M,"Current PL"),
+  P("Bukayo Saka",88,"FWD","Arsenal","England","🏴",23,"Left",178,140*M,"Current PL"),
+  P("Declan Rice",87,"MID","Arsenal","England","🏴",26,"Right",185,110*M,"Current PL"),
+  P("Alisson Becker",89,"GK","Liverpool","Brazil","🇧🇷",32,"Right",191,35*M,"Current PL"),
+  P("Virgil van Dijk",89,"DEF","Liverpool","Netherlands","🇳🇱",34,"Right",195,25*M,"Current PL"),
+  P("William Saliba",87,"DEF","Arsenal","France","🇫🇷",24,"Right",192,90*M,"Current PL"),
+  P("Cole Palmer",87,"MID","Chelsea","England","🏴",23,"Left",189,110*M,"Current PL"),
+  P("Phil Foden",87,"MID","Man City","England","🏴",25,"Left",171,120*M,"Current PL"),
+  // Prime UCL / European royalty
+  P("Zlatan Ibrahimović (Prime)",92,"FWD","Inter Milan","Sweden","🇸🇪",27,"Right",195,85*M,"Prime UCL"),
+  P("Andrea Pirlo (Prime)",91,"MID","AC Milan","Italy","🇮🇹",28,"Right",177,80*M,"Prime UCL"),
+  P("Xabi Alonso (Prime)",89,"MID","Liverpool","Spain","🇪🇸",25,"Right",183,68*M,"Prime UCL"),
+  P("Fabio Cannavaro (Prime)",90,"DEF","Real Madrid","Italy","🇮🇹",32,"Right",176,60*M,"Prime UCL"),
+  P("Ronaldinho (Prime)",95,"FWD","Barcelona","Brazil","🇧🇷",25,"Right",181,125*M,"Prime UCL"),
+  P("Clarence Seedorf (Prime)",88,"MID","AC Milan","Netherlands","🇳🇱",28,"Left",180,55*M,"Prime UCL"),
+  P("Alessandro Nesta (Prime)",90,"DEF","AC Milan","Italy","🇮🇹",29,"Right",187,62*M,"Prime UCL"),
+  P("Kaká (Prime)",92,"MID","AC Milan","Brazil","🇧🇷",25,"Right",186,95*M,"Prime UCL"),
+  P("Samuel Eto'o (Prime)",91,"FWD","Barcelona","Cameroon","🇨🇲",26,"Right",180,78*M,"Prime UCL"),
+  P("Iker Casillas (Prime)",91,"GK","Real Madrid","Spain","🇪🇸",26,"Right",182,72*M,"Prime UCL"),
+  // Current UCL
+  P("Kylian Mbappé",92,"FWD","Real Madrid","France","🇫🇷",27,"Right",178,180*M,"Current UCL"),
+  P("Jamal Musiala",87,"MID","Bayern Munich","Germany","🇩🇪",23,"Right",184,120*M,"Current UCL"),
+  P("Harry Kane",89,"FWD","Bayern Munich","England","🏴",32,"Right",188,60*M,"Current UCL"),
+  P("Rodri",89,"MID","Man City","Spain","🇪🇸",30,"Right",191,90*M,"Current UCL"),
+  P("Manuel Neuer",86,"GK","Bayern Munich","Germany","🇩🇪",40,"Right",193,10*M,"Current UCL"),
+  P("Achraf Hakimi",86,"DEF","PSG","Morocco","🇲🇦",27,"Right",181,65*M,"Current UCL"),
+  P("Ousmane Dembélé",87,"FWD","PSG","France","🇫🇷",29,"Left",178,60*M,"Current UCL"),
+  P("Federico Valverde (UCL)",88,"MID","Real Madrid","Uruguay","🇺🇾",26,"Right",182,120*M,"Current UCL"),
+  P("Alphonso Davies",85,"DEF","Bayern Munich","Canada","🇨🇦",25,"Left",181,70*M,"Current UCL"),
+  P("Victor Osimhen",86,"FWD","Galatasaray","Nigeria","🇳🇬",27,"Right",185,75*M,"Current UCL"),
+  // National teams flair
+  P("Son Heung-min",88,"FWD","Tottenham","South Korea","🇰🇷",33,"Left",183,25*M,"National Teams"),
+  P("Luka Modrić",87,"MID","Real Madrid","Croatia","🇭🇷",39,"Right",172,8*M,"National Teams"),
+  P("Robert Lewandowski (Nat)",89,"FWD","Poland","Poland","🇵🇱",36,"Right",185,20*M,"National Teams"),
+  P("Sadio Mané",86,"FWD","Al Nassr","Senegal","🇸🇳",33,"Right",175,20*M,"National Teams"),
+  P("Casemiro",85,"MID","Man United","Brazil","🇧🇷",33,"Right",185,20*M,"National Teams"),
+  // Wonderkids
+  P("Lamine Yamal (WK)",89,"FWD","Barcelona","Spain","🇪🇸",18,"Left",180,180*M,"Wonderkids"),
+  P("Endrick",82,"FWD","Real Madrid","Brazil","🇧🇷",19,"Right",176,60*M,"Wonderkids"),
+  P("Warren Zaïre-Emery",83,"MID","PSG","France","🇫🇷",20,"Right",174,70*M,"Wonderkids"),
+  P("Pau Cubarsí",83,"DEF","Barcelona","Spain","🇪🇸",18,"Right",180,60*M,"Wonderkids"),
+  P("Kobbie Mainoo",82,"MID","Man United","England","🏴",20,"Right",180,55*M,"Wonderkids"),
+  P("Arda Güler",82,"MID","Real Madrid","Turkey","🇹🇷",21,"Left",173,50*M,"Wonderkids"),
+  // more current PL / LaLiga depth
+  P("Martin Ødegaard",87,"MID","Arsenal","Norway","🇳🇴",26,"Left",178,90*M,"Current PL"),
+  P("Ederson",86,"GK","Man City","Brazil","🇧🇷",31,"Left",188,35*M,"Current PL"),
+  P("Ruben Dias",87,"DEF","Man City","Portugal","🇵🇹",28,"Right",187,70*M,"Current PL"),
+  P("Trent Alexander-Arnold",86,"DEF","Real Madrid","England","🏴",26,"Right",175,65*M,"Current PL"),
+  P("Bruno Fernandes",87,"MID","Man United","Portugal","🇵🇹",30,"Right",179,60*M,"Current PL"),
+  P("Nicolás Otamendi",83,"DEF","Benfica","Argentina","🇦🇷",37,"Right",183,3*M,"National Teams"),
+  P("Antonio Rüdiger",86,"DEF","Real Madrid","Germany","🇩🇪",32,"Right",190,25*M,"Current LaLiga"),
+  P("Jules Koundé",85,"DEF","Barcelona","France","🇫🇷",26,"Right",178,55*M,"Current LaLiga"),
+  P("Raphinha",87,"FWD","Barcelona","Brazil","🇧🇷",28,"Right",176,90*M,"Current LaLiga"),
+  P("Alexander Isak",87,"FWD","Newcastle","Sweden","🇸🇪",25,"Right",192,110*M,"Current PL"),
+  P("Moisés Caicedo",84,"MID","Chelsea","Ecuador","🇪🇨",23,"Right",178,80*M,"Current PL"),
+  P("Nico Williams",85,"FWD","Athletic Bilbao","Spain","🇪🇸",22,"Left",181,90*M,"Current LaLiga"),
+  P("Mikel Merino",83,"MID","Arsenal","Spain","🇪🇸",28,"Right",187,40*M,"Current PL"),
+  P("Julian Alvarez",86,"FWD","Atlético Madrid","Argentina","🇦🇷",24,"Right",170,80*M,"Current LaLiga"),
+  P("Marc-André ter Stegen",86,"GK","Barcelona","Germany","🇩🇪",32,"Left",187,25*M,"Current LaLiga"),
+  P("Frenkie de Jong",84,"MID","Barcelona","Netherlands","🇳🇱",27,"Right",180,50*M,"Current LaLiga"),
+  P("Bukayo Saka (UCL)",88,"FWD","Arsenal","England","🏴",23,"Left",178,140*M,"Current UCL"),
+  P("Vitinha",85,"MID","PSG","Portugal","🇵🇹",24,"Right",172,80*M,"Current UCL"),
+  P("Désiré Doué",83,"FWD","PSG","France","🇫🇷",19,"Right",179,65*M,"Wonderkids"),
+  // Extra Legends
+  P("George Best",90,"FWD","Retired","Northern Ireland","🇬🇧",'-',"Right",173,70*M,"Legends"),
+  P("Bobby Moore",89,"DEF","Retired","England","🏴",'-',"Right",180,55*M,"Legends"),
+  P("Eusébio",93,"FWD","Retired","Portugal","🇵🇹",'-',"Right",174,90*M,"Legends"),
+  P("Michel Platini",92,"MID","Retired","France","🇫🇷",'-',"Right",177,85*M,"Legends"),
+  P("Marco van Basten",93,"FWD","Retired","Netherlands","🇳🇱",'-',"Right",188,95*M,"Legends"),
+  P("Alfredo Di Stéfano",94,"FWD","Retired","Argentina","🇦🇷",'-',"Right",178,100*M,"Legends"),
+  P("Lev Yashin",89,"GK","Retired","Soviet Union","🇷🇺",'-',"Right",189,60*M,"Legends"),
+  P("George Weah",90,"FWD","Retired","Liberia","🇱🇷",'-',"Right",184,75*M,"Legends"),
+  P("Roberto Baggio",91,"FWD","Retired","Italy","🇮🇹",'-',"Right",174,88*M,"Legends"),
+  P("Gerd Müller",92,"FWD","Retired","Germany","🇩🇪",'-',"Right",176,90*M,"Legends"),
+  P("Ferenc Puskás",93,"FWD","Retired","Hungary","🇭🇺",'-',"Left",172,90*M,"Legends"),
+  P("Bobby Charlton",89,"MID","Retired","England","🏴",'-',"Right",179,55*M,"Legends"),
+  P("Dennis Bergkamp",90,"FWD","Retired","Netherlands","🇳🇱",44,"Right",186,80*M,"Legends"),
+  P("Ronald Koeman",88,"DEF","Retired","Netherlands","🇳🇱",47,"Right",181,55*M,"Legends"),
+  P("Hristo Stoichkov",89,"FWD","Retired","Bulgaria","🇧🇬",44,"Left",178,70*M,"Legends"),
+  // Serie A flavor (Prime + Current)
+  P("Francesco Totti (Prime)",91,"FWD","AS Roma","Italy","🇮🇹",27,"Right",180,85*M,"Prime UCL"),
+  P("Alessandro Del Piero (Prime)",90,"FWD","Juventus","Italy","🇮🇹",26,"Left",174,80*M,"Prime UCL"),
+  P("Javier Zanetti (Prime)",87,"DEF","Inter Milan","Argentina","🇦🇷",29,"Right",178,50*M,"Prime UCL"),
+  P("Victor Osimhen (Serie A)",86,"FWD","Napoli","Nigeria","🇳🇬",26,"Right",185,90*M,"Current UCL"),
+  P("Lautaro Martínez",87,"FWD","Inter Milan","Argentina","🇦🇷",27,"Right",174,90*M,"Current UCL"),
+  P("Theo Hernández",85,"DEF","AC Milan","France","🇫🇷",27,"Left",184,55*M,"Current UCL"),
+  P("Mike Maignan",86,"GK","AC Milan","France","🇫🇷",29,"Left",191,35*M,"Current UCL"),
+  P("Federico Chiesa",83,"FWD","Liverpool","Italy","🇮🇹",27,"Right",175,35*M,"Current UCL"),
+  // Bundesliga flavor
+  P("Franck Ribéry (Prime)",90,"FWD","Bayern Munich","France","🇫🇷",29,"Left",170,65*M,"Prime UCL"),
+  P("Arjen Robben (Prime)",90,"FWD","Bayern Munich","Netherlands","🇳🇱",29,"Left",180,68*M,"Prime UCL"),
+  P("Bastian Schweinsteiger (Prime)",88,"MID","Bayern Munich","Germany","🇩🇪",29,"Right",183,55*M,"Prime UCL"),
+  P("Florian Wirtz",87,"MID","Bayer Leverkusen","Germany","🇩🇪",22,"Right",176,130*M,"Wonderkids"),
+  P("Serhou Guirassy",83,"FWD","Borussia Dortmund","Guinea","🇬🇳",28,"Right",188,45*M,"Current UCL"),
+  P("Joshua Kimmich",87,"MID","Bayern Munich","Germany","🇩🇪",30,"Right",176,60*M,"Current UCL"),
+  // Ligue 1 flavor
+  P("Zinedine Zidane (PSG Era)",90,"MID","Retired","France","🇫🇷",34,"Right",185,70*M,"Legends"),
+  P("Marco Verratti",86,"MID","PSG","Italy","🇮🇹",31,"Right",165,35*M,"Current UCL"),
+  P("Bradley Barcola",82,"FWD","PSG","France","🇫🇷",22,"Left",182,60*M,"Wonderkids"),
+  // More National Teams flair
+  P("Kylian Mbappé (Nat)",92,"FWD","France","France","🇫🇷",27,"Right",178,180*M,"National Teams"),
+  P("Cristiano Ronaldo (Nat)",86,"FWD","Portugal","Portugal","🇵🇹",41,"Right",187,15*M,"National Teams"),
+  P("Lionel Messi (Nat)",88,"FWD","Argentina","Argentina","🇦🇷",38,"Left",170,20*M,"National Teams"),
+  P("Neymar Jr (Nat)",83,"FWD","Brazil","Brazil","🇧🇷",34,"Right",175,20*M,"National Teams"),
+  P("Harry Kane (Nat)",89,"FWD","England","England","🏴",32,"Right",188,60*M,"National Teams"),
+  P("Virgil van Dijk (Nat)",89,"DEF","Netherlands","Netherlands","🇳🇱",34,"Right",195,25*M,"National Teams"),
+  P("Achraf Hakimi (Nat)",86,"DEF","Morocco","Morocco","🇲🇦",27,"Right",181,65*M,"National Teams"),
+  P("Vinícius Júnior (Nat)",89,"FWD","Brazil","Brazil","🇧🇷",25,"Right",176,150*M,"National Teams"),
+  P("Erling Haaland (Nat)",90,"FWD","Norway","Norway","🇳🇴",25,"Left",195,180*M,"National Teams"),
+  P("Kim Min-jae",85,"DEF","Bayern Munich","South Korea","🇰🇷",28,"Right",190,50*M,"Current UCL"),
+  // More Wonderkids
+  P("Rodrigo Mora",80,"MID","Porto","Portugal","🇵🇹",17,"Right",167,45*M,"Wonderkids"),
+  P("Estêvão Willian",81,"FWD","Chelsea","Brazil","🇧🇷",18,"Right",172,55*M,"Wonderkids"),
+  P("Yamal Camara",78,"FWD","Monaco","France","🇫🇷",18,"Right",178,35*M,"Wonderkids"),
+  P("Chido Obi-Martin",76,"FWD","Man United","Denmark","🇩🇰",17,"Right",180,20*M,"Wonderkids"),
+  P("Antonio Nusa",80,"FWD","RB Leipzig","Norway","🇳🇴",20,"Right",184,40*M,"Wonderkids"),
+  // More current PL / LaLiga depth for variety
+  P("Bruno Guimarães",85,"MID","Newcastle","Brazil","🇧🇷",27,"Right",182,80*M,"Current PL"),
+  P("Morgan Rogers",81,"FWD","Aston Villa","England","🏴",22,"Right",188,40*M,"Current PL"),
+  P("James Maddison",83,"MID","Tottenham","England","🏴",28,"Right",176,30*M,"Current PL"),
+  P("Chris Wood",80,"FWD","Nottingham Forest","New Zealand","🇳🇿",33,"Left",191,15*M,"Current PL"),
+  P("Ansu Fati",79,"FWD","Barcelona","Spain","🇪🇸",22,"Left",178,25*M,"Current LaLiga"),
+  P("Álvaro Morata",81,"FWD","Milan","Spain","🇪🇸",32,"Right",190,12*M,"Current LaLiga"),
+  P("Takefusa Kubo",83,"FWD","Real Sociedad","Japan","🇯🇵",24,"Left",173,45*M,"Current LaLiga"),
+  P("Aymeric Laporte",84,"DEF","Al Nassr","Spain","🇪🇸",31,"Left",189,20*M,"Current LaLiga"),
+  P("Iñigo Martínez",84,"DEF","Al Nassr","Spain","🇪🇸",34,"Left",180,15*M,"Current LaLiga"),
+  // GK variety
+  P("Jan Oblak",88,"GK","Atlético Madrid","Slovenia","🇸🇮",32,"Right",188,35*M,"Current LaLiga"),
+  P("David Raya",84,"GK","Arsenal","Spain","🇪🇸",30,"Right",183,35*M,"Current PL"),
+  P("Emiliano Martínez",85,"GK","Aston Villa","Argentina","🇦🇷",33,"Right",195,30*M,"Current PL"),
+  P("Gianluigi Donnarumma",87,"GK","Man City","Italy","🇮🇹",26,"Right",196,40*M,"Current UCL"),
+  // 5-a-side / 7-a-side friendly cheaper depth options
+  P("Danny Welbeck",78,"FWD","Brighton","England","🏴",34,"Right",185,8*M,"Current PL"),
+  P("Jonny Evans",76,"DEF","Man United","Northern Ireland","🇬🇧",37,"Right",188,3*M,"National Teams"),
+  P("Wout Weghorst",77,"FWD","Ajax","Netherlands","🇳🇱",32,"Right",197,8*M,"National Teams"),
+  P("Joel Matip",78,"DEF","Retired","Cameroon","🇨🇲",33,"Right",195,4*M,"National Teams"),
+  P("Kevin Trapp",80,"GK","Eintracht Frankfurt","Germany","🇩🇪",34,"Right",189,8*M,"National Teams"),
+  // More Icons / Legends for bigger leagues
+  P("Ruud Gullit",92,"MID","Retired","Netherlands","🇳🇱",'-',"Right",191,90*M,"Icons"),
+  P("Roberto Baggio (Icon)",91,"FWD","Retired","Italy","🇮🇹",'-',"Right",174,88*M,"Icons"),
+  P("Rivaldo",91,"MID","Retired","Brazil","🇧🇷",'-',"Left",186,85*M,"Icons"),
+  P("Carles Puyol",89,"DEF","Retired","Spain","🇪🇸",47,"Right",178,55*M,"Icons"),
+  P("Edwin van der Sar",89,"GK","Retired","Netherlands","🇳🇱",54,"Left",197,50*M,"Icons"),
+  P("Patrick Kluivert",89,"FWD","Retired","Netherlands","🇳🇱",48,"Right",186,60*M,"Icons"),
+  P("Luís Figo",90,"MID","Retired","Portugal","🇵🇹",52,"Right",180,75*M,"Icons"),
+  P("Hernán Crespo",88,"FWD","Retired","Argentina","🇦🇷",49,"Right",184,55*M,"Icons"),
+  P("David Beckham",88,"MID","Retired","England","🏴",50,"Right",183,70*M,"Icons"),
+  P("Michael Owen",87,"FWD","Retired","England","🏴",45,"Right",173,45*M,"Icons"),
+  P("Fabio Capello",84,"MID","Retired","Italy","🇮🇹",'-',"Right",178,20*M,"Legends"),
+  P("Socrates",90,"MID","Retired","Brazil","🇧🇷",'-',"Right",186,45*M,"Legends"),
+  P("Garrincha",93,"FWD","Retired","Brazil","🇧🇷",'-',"Right",169,80*M,"Legends"),
+  P("Bobby Robson",80,"MID","Retired","England","🏴",'-',"Right",178,10*M,"Legends"),
+  P("Karl-Heinz Rummenigge",89,"FWD","Retired","Germany","🇩🇪",'-',"Right",180,60*M,"Legends"),
+  P("Paolo Rossi",89,"FWD","Retired","Italy","🇮🇹",'-',"Right",176,55*M,"Legends"),
+  P("Just Fontaine",88,"FWD","Retired","France","🇫🇷",'-',"Right",171,40*M,"Legends"),
+  P("Bobby Moncur",78,"DEF","Retired","Scotland","🏴",'-',"Right",180,8*M,"Legends"),
+  // More Current PL / LaLiga depth
+  P("Rasmus Højlund",81,"FWD","Man United","Denmark","🇩🇰",23,"Right",191,45*M,"Current PL"),
+  P("Evan Ferguson",78,"FWD","Brighton","Ireland","🇮🇪",21,"Right",188,30*M,"Wonderkids"),
+  P("Kaoru Mitoma",83,"FWD","Brighton","Japan","🇯🇵",29,"Left",178,40*M,"Current PL"),
+  P("Tino Livramento",80,"DEF","Newcastle","England","🏴",22,"Right",178,35*M,"Current PL"),
+  P("Nathan Aké",82,"DEF","Man City","Netherlands","🇳🇱",30,"Left",180,25*M,"Current PL"),
+  P("Conor Gallagher",80,"MID","Atlético Madrid","England","🏴",25,"Right",176,35*M,"Current LaLiga"),
+  P("Dani Olmo",85,"MID","Barcelona","Spain","🇪🇸",27,"Right",179,55*M,"Current LaLiga"),
+  P("Fermín López",82,"MID","Barcelona","Spain","🇪🇸",22,"Right",174,50*M,"Wonderkids"),
+  P("Robin Le Normand",82,"DEF","Atlético Madrid","Spain","🇪🇸",28,"Right",186,40*M,"Current LaLiga"),
+  P("Mason Mount",79,"MID","Man United","England","🏴",27,"Right",180,25*M,"Current PL"),
+  // More Prime PL / UCL depth
+  P("Emmanuel Petit (Prime)",87,"MID","Arsenal","France","🇫🇷",28,"Left",191,45*M,"Prime PL"),
+  P("Marc Overmars (Prime)",86,"FWD","Arsenal","Netherlands","🇳🇱",26,"Left",178,40*M,"Prime PL"),
+  P("Sol Campbell (Prime)",86,"DEF","Arsenal","England","🏴",27,"Right",191,40*M,"Prime PL"),
+  P("John Terry (Prime)",89,"DEF","Chelsea","England","🏴",27,"Right",187,58*M,"Prime PL"),
+  P("Michael Essien (Prime)",87,"MID","Chelsea","Ghana","🇬🇭",25,"Right",180,50*M,"Prime PL"),
+  P("Andrea Pirlo (UCL Prime)",91,"MID","Milan","Italy","🇮🇹",29,"Right",177,80*M,"Prime UCL"),
+  P("Deco (Prime)",88,"MID","Barcelona","Portugal","🇵🇹",27,"Right",172,60*M,"Prime UCL"),
+  P("Edwin van der Sar (Prime)",90,"GK","Man United","Netherlands","🇳🇱",36,"Left",197,55*M,"Prime UCL"),
+  // More wonderkids/national flair for depth
+  P("Kenan Yıldız",82,"FWD","Juventus","Turkey","🇹🇷",20,"Left",181,60*M,"Wonderkids"),
+  P("Samu Omorodion",80,"FWD","Porto","Spain","🇪🇸",20,"Right",187,40*M,"Wonderkids"),
+  P("Lucas Bergvall",79,"MID","Tottenham","Sweden","🇸🇪",19,"Right",180,35*M,"Wonderkids"),
+  P("Assane Diao",76,"FWD","Como","Spain","🇪🇸",18,"Right",178,20*M,"Wonderkids"),
+  P("Malick Fofana",78,"FWD","Lyon","Belgium","🇧🇪",20,"Left",178,35*M,"Wonderkids"),
+  P("Deivid Washington",75,"FWD","Chelsea","Brazil","🇧🇷",19,"Right",185,15*M,"Wonderkids"),
+  // Deeper Prime LaLiga pool
+  P("Ronaldo Nazário (LaLiga Prime)",97,"FWD","Real Madrid","Brazil","🇧🇷",26,"Right",183,150*M,"Prime LaLiga"),
+  P("David Villa (Prime)",89,"FWD","Valencia","Spain","🇪🇸",26,"Left",175,60*M,"Prime LaLiga"),
+  P("Fernando Torres (Prime)",88,"FWD","Atlético Madrid","Spain","🇪🇸",22,"Right",186,55*M,"Prime LaLiga"),
+  P("Diego Forlán (Prime)",87,"FWD","Atlético Madrid","Uruguay","🇺🇾",28,"Left",180,50*M,"Prime LaLiga"),
+  P("Raúl González (Prime)",91,"FWD","Real Madrid","Spain","🇪🇸",27,"Right",181,85*M,"Prime LaLiga"),
+  P("Deco (Prime LaLiga)",88,"MID","Barcelona","Portugal","🇵🇹",27,"Right",172,60*M,"Prime LaLiga"),
+  P("Diego Simeone (Prime)",85,"MID","Atlético Madrid","Argentina","🇦🇷",28,"Right",172,35*M,"Prime LaLiga"),
+  P("Michael Laudrup (Prime)",90,"MID","Barcelona","Denmark","🇩🇰",28,"Right",178,60*M,"Prime LaLiga"),
+  P("Gaizka Mendieta (Prime)",86,"MID","Valencia","Spain","🇪🇸",26,"Right",180,40*M,"Prime LaLiga"),
+  P("Hugo Sánchez (Prime)",90,"FWD","Real Madrid","Mexico","🇲🇽",28,"Right",177,65*M,"Prime LaLiga"),
+  P("Emilio Butragueño (Prime)",87,"FWD","Real Madrid","Spain","🇪🇸",25,"Right",177,45*M,"Prime LaLiga"),
+  P("Bebeto (Prime)",86,"FWD","Deportivo","Brazil","🇧🇷",28,"Left",173,40*M,"Prime LaLiga"),
+  P("Rivaldo (Prime LaLiga)",91,"MID","Barcelona","Brazil","🇧🇷",26,"Left",186,80*M,"Prime LaLiga"),
+  P("Míchel (Prime)",85,"MID","Real Madrid","Spain","🇪🇸",26,"Right",180,35*M,"Prime LaLiga"),
+  P("Andoni Zubizarreta (Prime)",84,"GK","Barcelona","Spain","🇪🇸",30,"Right",186,25*M,"Prime LaLiga"),
+  // Deeper Prime Premier League pool
+  P("Alan Shearer (Prime)",91,"FWD","Newcastle","England","🏴",26,"Right",182,80*M,"Prime PL"),
+  P("Eric Cantona (Prime)",90,"FWD","Man United","France","🇫🇷",28,"Right",188,70*M,"Prime PL"),
+  P("Peter Schmeichel (Prime)",90,"GK","Man United","Denmark","🇩🇰",30,"Right",191,60*M,"Prime PL"),
+  P("Dennis Bergkamp (Prime)",90,"FWD","Arsenal","Netherlands","🇳🇱",28,"Right",186,75*M,"Prime PL"),
+  P("Ian Wright (Prime)",87,"FWD","Arsenal","England","🏴",29,"Right",175,45*M,"Prime PL"),
+  P("Roy Keane (Prime)",89,"MID","Man United","Ireland","🇮🇪",27,"Right",178,55*M,"Prime PL"),
+  P("Paul Scholes (Prime)",90,"MID","Man United","England","🏴",26,"Right",170,60*M,"Prime PL"),
+  P("Gianfranco Zola (Prime)",89,"FWD","Chelsea","Italy","🇮🇹",29,"Right",167,45*M,"Prime PL"),
+  P("Robbie Fowler (Prime)",87,"FWD","Liverpool","England","🏴",23,"Left",183,40*M,"Prime PL"),
+  P("Jaap Stam (Prime)",89,"DEF","Man United","Netherlands","🇳🇱",27,"Right",193,45*M,"Prime PL"),
+  P("Ashley Cole (Prime)",88,"DEF","Arsenal","England","🏴",24,"Left",174,50*M,"Prime PL"),
+  P("Nemanja Vidić (Prime)",90,"DEF","Man United","Serbia","🇷🇸",28,"Right",185,58*M,"Prime PL"),
+  // Deeper Prime UCL pool
+  P("Rui Costa (Prime)",89,"MID","AC Milan","Portugal","🇵🇹",29,"Right",179,55*M,"Prime UCL"),
+  P("Hernán Crespo (Prime UCL)",89,"FWD","Inter Milan","Argentina","🇦🇷",27,"Right",184,60*M,"Prime UCL"),
+  P("Roberto Carlos (Prime UCL)",91,"DEF","Real Madrid","Brazil","🇧🇷",25,"Left",168,80*M,"Prime UCL"),
+  P("Christian Vieri (Prime)",89,"FWD","Inter Milan","Italy","🇮🇹",27,"Right",186,65*M,"Prime UCL"),
+  P("Edgar Davids (Prime)",87,"MID","Juventus","Netherlands","🇳🇱",27,"Right",173,45*M,"Prime UCL"),
+  P("Gabriel Batistuta (Prime)",90,"FWD","AS Roma","Argentina","🇦🇷",32,"Right",187,55*M,"Prime UCL"),
+  P("Filippo Inzaghi (Prime)",87,"FWD","AC Milan","Italy","🇮🇹",30,"Right",181,45*M,"Prime UCL"),
+  P("Paolo Maldini (Prime UCL)",92,"DEF","AC Milan","Italy","🇮🇹",30,"Left",186,75*M,"Prime UCL"),
+  // A few more current stars requested by name
+  P("Jeremy Doku",84,"FWD","Man City","Belgium","🇧🇪",23,"Right",172,60*M,"Current PL"),
+  P("Anthony Gordon",82,"FWD","Newcastle","England","🏴",24,"Left",178,50*M,"Current PL"),
+  P("Morgan Gibbs-White",81,"MID","Nottingham Forest","England","🏴",25,"Right",173,45*M,"Current PL"),
+  P("Isco",81,"MID","Real Betis","Spain","🇪🇸",33,"Right",176,10*M,"Current LaLiga"),
+  P("Ayoze Pérez",80,"FWD","Villarreal","Spain","🇪🇸",32,"Right",173,15*M,"Current LaLiga"),
+
+  // ===== EXPANSION BATCH — bringing every category up to 44+ players =====
+
+  // Icons (+14) — Icon cards of legends already featured elsewhere
+  P("Alan Shearer (Icon)",92,"FWD","Retired","England","🏴",50,"Right",182,85*M,"Icons"),
+  P("Eric Cantona (Icon)",91,"FWD","Retired","France","🇫🇷",58,"Right",188,75*M,"Icons"),
+  P("Peter Schmeichel (Icon)",91,"GK","Retired","Denmark","🇩🇰",60,"Right",191,65*M,"Icons"),
+  P("Dennis Bergkamp (Icon)",91,"FWD","Retired","Netherlands","🇳🇱",55,"Right",186,80*M,"Icons"),
+  P("Roy Keane (Icon)",90,"MID","Retired","Ireland","🇮🇪",52,"Right",178,60*M,"Icons"),
+  P("Paul Scholes (Icon)",91,"MID","Retired","England","🏴",49,"Right",170,65*M,"Icons"),
+  P("Fernando Torres (Icon)",89,"FWD","Retired","Spain","🇪🇸",40,"Right",186,60*M,"Icons"),
+  P("Raúl González (Icon)",92,"FWD","Retired","Spain","🇪🇸",47,"Right",181,90*M,"Icons"),
+  P("David Villa (Icon)",90,"FWD","Retired","Spain","🇪🇸",42,"Left",175,65*M,"Icons"),
+  P("Gabriel Batistuta (Icon)",92,"FWD","Retired","Argentina","🇦🇷",55,"Right",187,60*M,"Icons"),
+  P("Christian Vieri (Icon)",90,"FWD","Retired","Italy","🇮🇹",50,"Right",186,70*M,"Icons"),
+  P("Filippo Inzaghi (Icon)",88,"FWD","Retired","Italy","🇮🇹",51,"Right",181,50*M,"Icons"),
+  P("Edgar Davids (Icon)",88,"MID","Retired","Netherlands","🇳🇱",51,"Right",173,50*M,"Icons"),
+  P("Rui Costa (Icon)",90,"MID","Retired","Portugal","🇵🇹",52,"Right",179,60*M,"Icons"),
+
+  // Legends (+20)
+  P("Zico",92,"MID","Retired","Brazil","🇧🇷",'-',"Right",172,85*M,"Legends"),
+  P("Falcão",89,"MID","Retired","Brazil","🇧🇷",'-',"Right",178,55*M,"Legends"),
+  P("Franco Baresi",92,"DEF","Retired","Italy","🇮🇹",'-',"Right",176,80*M,"Legends"),
+  P("Gaetano Scirea",89,"DEF","Retired","Italy","🇮🇹",'-',"Right",180,55*M,"Legends"),
+  P("Dino Zoff",89,"GK","Retired","Italy","🇮🇹",'-',"Right",182,50*M,"Legends"),
+  P("Kenny Dalglish",90,"FWD","Retired","Scotland","🏴",'-',"Left",175,65*M,"Legends"),
+  P("Ian Rush",89,"FWD","Retired","Wales","🏴",'-',"Right",178,60*M,"Legends"),
+  P("Peter Beardsley",86,"FWD","Retired","England","🏴",'-',"Right",165,35*M,"Legends"),
+  P("Gordon Banks",90,"GK","Retired","England","🏴",'-',"Right",183,55*M,"Legends"),
+  P("Johan Neeskens",89,"MID","Retired","Netherlands","🇳🇱",'-',"Right",176,55*M,"Legends"),
+  P("Rob Rensenbrink",87,"FWD","Retired","Netherlands","🇳🇱",'-',"Left",180,40*M,"Legends"),
+  P("Preben Elkjær",87,"FWD","Retired","Denmark","🇩🇰",'-',"Right",178,35*M,"Legends"),
+  P("Allan Simonsen",86,"FWD","Retired","Denmark","🇩🇰",'-',"Left",162,35*M,"Legends"),
+  P("Enzo Francescoli",89,"FWD","Retired","Uruguay","🇺🇾",'-',"Right",176,50*M,"Legends"),
+  P("Elías Figueroa",88,"DEF","Retired","Chile","🇨🇱",'-',"Right",185,40*M,"Legends"),
+  P("Mário Zagallo",83,"FWD","Retired","Brazil","🇧🇷",'-',"Left",172,20*M,"Legends"),
+  P("Nílton Santos",87,"DEF","Retired","Brazil","🇧🇷",'-',"Left",180,35*M,"Legends"),
+  P("Djalma Santos",87,"DEF","Retired","Brazil","🇧🇷",'-',"Right",178,35*M,"Legends"),
+  P("Amancio Amaro",86,"FWD","Retired","Spain","🇪🇸",'-',"Right",172,35*M,"Legends"),
+  P("Luis Suárez Miramontes",89,"MID","Retired","Spain","🇪🇸",'-',"Right",172,50*M,"Legends"),
+
+  // Prime LaLiga (+18)
+  P("Míchel Salgado (Prime)",85,"DEF","Real Madrid","Spain","🇪🇸",27,"Right",180,35*M,"Prime LaLiga"),
+  P("Iván Zamorano (Prime)",87,"FWD","Real Madrid","Chile","🇨🇱",28,"Right",180,45*M,"Prime LaLiga"),
+  P("Predrag Mijatović (Prime)",86,"FWD","Real Madrid","Montenegro","🇲🇪",29,"Left",178,42*M,"Prime LaLiga"),
+  P("Fernando Hierro (Prime)",88,"DEF","Real Madrid","Spain","🇪🇸",29,"Right",186,50*M,"Prime LaLiga"),
+  P("Clarence Seedorf (Real Madrid)",87,"MID","Real Madrid","Netherlands","🇳🇱",22,"Left",180,50*M,"Prime LaLiga"),
+  P("Sonny Anderson (Prime)",85,"FWD","Barcelona","Brazil","🇧🇷",27,"Right",178,38*M,"Prime LaLiga"),
+  P("Luis Enrique (Prime)",85,"MID","Barcelona","Spain","🇪🇸",27,"Right",179,38*M,"Prime LaLiga"),
+  P("Gheorghe Hagi (Prime)",89,"MID","Real Madrid","Romania","🇷🇴",26,"Left",174,52*M,"Prime LaLiga"),
+  P("Christian Karembeu (Prime)",83,"MID","Real Madrid","France","🇫🇷",26,"Right",178,30*M,"Prime LaLiga"),
+  P("Fernando Redondo (Prime)",88,"MID","Real Madrid","Argentina","🇦🇷",28,"Left",186,48*M,"Prime LaLiga"),
+  P("Steve McManaman (Prime)",85,"MID","Real Madrid","England","🏴",27,"Left",173,40*M,"Prime LaLiga"),
+  P("Geovanni (Prime)",83,"MID","Barcelona","Brazil","🇧🇷",23,"Left",169,28*M,"Prime LaLiga"),
+  P("Frank de Boer (Prime)",86,"DEF","Barcelona","Netherlands","🇳🇱",27,"Right",186,42*M,"Prime LaLiga"),
+  P("Josep Guardiola (Prime)",86,"MID","Barcelona","Spain","🇪🇸",26,"Right",180,40*M,"Prime LaLiga"),
+  P("Aitor Karanka (Prime)",81,"DEF","Real Madrid","Spain","🇪🇸",27,"Right",184,22*M,"Prime LaLiga"),
+  P("Ronaldo Nazário (Barcelona)",96,"FWD","Barcelona","Brazil","🇧🇷",20,"Right",183,140*M,"Prime LaLiga"),
+  P("Luís Figo (Prime LaLiga)",90,"MID","Barcelona","Portugal","🇵🇹",25,"Right",180,75*M,"Prime LaLiga"),
+  P("Patrick Kluivert (Barcelona Prime)",88,"FWD","Barcelona","Netherlands","🇳🇱",23,"Right",186,55*M,"Prime LaLiga"),
+
+  // Prime PL (+17)
+  P("Teddy Sheringham (Prime)",87,"FWD","Man United","England","🏴",32,"Right",183,42*M,"Prime PL"),
+  P("Andy Cole (Prime)",87,"FWD","Man United","England","🏴",26,"Right",178,45*M,"Prime PL"),
+  P("David Seaman (Prime)",88,"GK","Arsenal","England","🏴",30,"Right",191,42*M,"Prime PL"),
+  P("Tony Adams (Prime)",87,"DEF","Arsenal","England","🏴",29,"Right",191,42*M,"Prime PL"),
+  P("Martin Keown (Prime)",83,"DEF","Arsenal","England","🏴",30,"Right",185,28*M,"Prime PL"),
+  P("Ray Parlour (Prime)",81,"MID","Arsenal","England","🏴",26,"Right",180,22*M,"Prime PL"),
+  P("Freddie Ljungberg (Prime)",85,"MID","Arsenal","Sweden","🇸🇪",25,"Right",180,35*M,"Prime PL"),
+  P("Robert Pirès (Prime)",87,"MID","Arsenal","France","🇫🇷",27,"Left",183,42*M,"Prime PL"),
+  P("Sylvain Wiltord (Prime)",83,"FWD","Arsenal","France","🇫🇷",26,"Right",173,28*M,"Prime PL"),
+  P("Ruud van Nistelrooy (Prime)",90,"FWD","Man United","Netherlands","🇳🇱",26,"Right",186,68*M,"Prime PL"),
+  P("Ole Gunnar Solskjær (Prime)",84,"FWD","Man United","Norway","🇳🇴",25,"Right",180,32*M,"Prime PL"),
+  P("Dwight Yorke (Prime)",86,"FWD","Man United","Trinidad and Tobago","🇹🇹",26,"Right",178,35*M,"Prime PL"),
+  P("Gary Neville (Prime)",84,"DEF","Man United","England","🏴",27,"Right",178,32*M,"Prime PL"),
+  P("David James (Prime)",84,"GK","Liverpool","England","🏴",27,"Right",193,30*M,"Prime PL"),
+  P("Robbie Keane (Prime)",85,"FWD","Tottenham","Ireland","🇮🇪",26,"Right",178,35*M,"Prime PL"),
+  P("Les Ferdinand (Prime)",84,"FWD","Newcastle","England","🏴",28,"Right",183,28*M,"Prime PL"),
+  P("Emile Heskey (Prime)",81,"FWD","Liverpool","England","🏴",24,"Right",189,25*M,"Prime PL"),
+
+  // Current LaLiga (+16)
+  P("Álex Baena",82,"MID","Villarreal","Spain","🇪🇸",23,"Left",180,45*M,"Current LaLiga"),
+  P("Yeremy Pino",81,"FWD","Villarreal","Spain","🇪🇸",22,"Right",172,40*M,"Current LaLiga"),
+  P("Aleix García",81,"MID","Girona","Spain","🇪🇸",27,"Right",181,35*M,"Current LaLiga"),
+  P("Artem Dovbyk",82,"FWD","Girona","Ukraine","🇺🇦",27,"Right",195,40*M,"Current LaLiga"),
+  P("Bryan Zaragoza",79,"FWD","Osasuna","Spain","🇪🇸",23,"Right",172,25*M,"Current LaLiga"),
+  P("Iñaki Williams",83,"FWD","Athletic Bilbao","Ghana","🇬🇭",30,"Right",181,40*M,"Current LaLiga"),
+  P("Oihan Sancet",83,"MID","Athletic Bilbao","Spain","🇪🇸",24,"Right",186,45*M,"Current LaLiga"),
+  P("Unai Simón",84,"GK","Athletic Bilbao","Spain","🇪🇸",27,"Right",190,40*M,"Current LaLiga"),
+  P("Mikel Oyarzabal",85,"FWD","Real Sociedad","Spain","🇪🇸",27,"Left",181,45*M,"Current LaLiga"),
+  P("Martín Zubimendi",84,"MID","Real Sociedad","Spain","🇪🇸",25,"Right",182,55*M,"Current LaLiga"),
+  P("Giovani Lo Celso",81,"MID","Real Betis","Argentina","🇦🇷",28,"Left",177,25*M,"Current LaLiga"),
+  P("Abde Ezzalzouli",80,"FWD","Real Betis","Morocco","🇲🇦",23,"Left",172,30*M,"Current LaLiga"),
+  P("Samuel Lino",81,"FWD","Atlético Madrid","Brazil","🇧🇷",25,"Left",172,35*M,"Current LaLiga"),
+  P("José María Giménez",83,"DEF","Atlético Madrid","Uruguay","🇺🇾",29,"Right",184,35*M,"Current LaLiga"),
+  P("Marcos Llorente",83,"MID","Atlético Madrid","Spain","🇪🇸",29,"Right",180,45*M,"Current LaLiga"),
+  P("Ángel Correa",81,"FWD","Atlético Madrid","Argentina","🇦🇷",30,"Left",165,25*M,"Current LaLiga"),
+
+  // Prime UCL (+17)
+  P("Didier Deschamps (Prime)",84,"MID","Juventus","France","🇫🇷",28,"Right",171,35*M,"Prime UCL"),
+  P("Zinedine Zidane (Juventus)",93,"MID","Juventus","France","🇫🇷",25,"Right",185,110*M,"Prime UCL"),
+  P("David Trezeguet (Prime)",87,"FWD","Juventus","France","🇫🇷",26,"Right",186,45*M,"Prime UCL"),
+  P("Pavel Nedvěd (Prime)",89,"MID","Juventus","Czech Republic","🇨🇿",29,"Left",180,50*M,"Prime UCL"),
+  P("Gianluca Zambrotta (Prime)",86,"DEF","Juventus","Italy","🇮🇹",27,"Right",180,38*M,"Prime UCL"),
+  P("Raúl González (Prime UCL)",91,"FWD","Real Madrid","Spain","🇪🇸",27,"Right",181,85*M,"Prime UCL"),
+  P("Michael Essien (Prime UCL)",87,"MID","Chelsea","Ghana","🇬🇭",25,"Right",180,50*M,"Prime UCL"),
+  P("Didier Drogba (Prime UCL)",91,"FWD","Chelsea","Ivory Coast","🇨🇮",29,"Right",190,88*M,"Prime UCL"),
+  P("Frank Lampard (Prime UCL)",89,"MID","Chelsea","England","🏴",29,"Right",184,58*M,"Prime UCL"),
+  P("John Terry (Prime UCL)",89,"DEF","Chelsea","England","🏴",27,"Right",187,58*M,"Prime UCL"),
+  P("Xavi Hernández (Prime UCL)",92,"MID","Barcelona","Spain","🇪🇸",29,"Right",170,90*M,"Prime UCL"),
+  P("Andrés Iniesta (Prime UCL)",92,"MID","Barcelona","Spain","🇪🇸",27,"Right",171,90*M,"Prime UCL"),
+  P("Carles Puyol (Prime UCL)",90,"DEF","Barcelona","Spain","🇪🇸",30,"Right",178,55*M,"Prime UCL"),
+  P("Ryan Giggs (Prime UCL)",89,"MID","Man United","Wales","🏴",30,"Left",180,52*M,"Prime UCL"),
+  P("Cristiano Ronaldo (Prime UCL)",92,"FWD","Man United","Portugal","🇵🇹",23,"Right",187,95*M,"Prime UCL"),
+  P("Wayne Rooney (Prime UCL)",90,"FWD","Man United","England","🏴",24,"Right",178,80*M,"Prime UCL"),
+  P("Steven Gerrard (Prime UCL)",91,"MID","Liverpool","England","🏴",25,"Right",183,85*M,"Prime UCL"),
+
+  // Current UCL (+22)
+  P("Robert Lewandowski (Current UCL)",88,"FWD","Barcelona","Poland","🇵🇱",36,"Right",185,30*M,"Current UCL"),
+  P("Raphinha (Current UCL)",87,"FWD","Barcelona","Brazil","🇧🇷",28,"Right",176,85*M,"Current UCL"),
+  P("Pedri (Current UCL)",87,"MID","Barcelona","Spain","🇪🇸",23,"Right",174,100*M,"Current UCL"),
+  P("Frenkie de Jong (Current UCL)",84,"MID","Barcelona","Netherlands","🇳🇱",27,"Right",180,45*M,"Current UCL"),
+  P("Vinícius Júnior (Current UCL)",90,"FWD","Real Madrid","Brazil","🇧🇷",25,"Right",176,180*M,"Current UCL"),
+  P("Jude Bellingham (Current UCL)",90,"MID","Real Madrid","England","🏴",22,"Right",186,170*M,"Current UCL"),
+  P("Erling Haaland (Current UCL)",91,"FWD","Man City","Norway","🇳🇴",25,"Left",195,175*M,"Current UCL"),
+  P("Phil Foden (Current UCL)",87,"MID","Man City","England","🏴",25,"Left",171,115*M,"Current UCL"),
+  P("Declan Rice (Current UCL)",86,"MID","Arsenal","England","🏴",26,"Right",185,105*M,"Current UCL"),
+  P("William Saliba (Current UCL)",86,"DEF","Arsenal","France","🇫🇷",24,"Right",192,85*M,"Current UCL"),
+  P("Martin Ødegaard (Current UCL)",86,"MID","Arsenal","Norway","🇳🇴",26,"Left",178,85*M,"Current UCL"),
+  P("Khvicha Kvaratskhelia",87,"FWD","Napoli","Georgia","🇬🇪",24,"Left",183,90*M,"Current UCL"),
+  P("Nicolò Barella",86,"MID","Inter Milan","Italy","🇮🇹",28,"Right",172,75*M,"Current UCL"),
+  P("Hakan Çalhanoğlu",85,"MID","Inter Milan","Turkey","🇹🇷",31,"Left",178,40*M,"Current UCL"),
+  P("Alessandro Bastoni",85,"DEF","Inter Milan","Italy","🇮🇹",26,"Left",190,65*M,"Current UCL"),
+  P("Federico Dimarco",83,"DEF","Inter Milan","Italy","🇮🇹",27,"Left",175,45*M,"Current UCL"),
+  P("Randal Kolo Muani",83,"FWD","PSG","France","🇫🇷",26,"Right",188,50*M,"Current UCL"),
+  P("Fabián Ruiz",83,"MID","PSG","Spain","🇪🇸",29,"Left",189,40*M,"Current UCL"),
+  P("Gonçalo Ramos",83,"FWD","PSG","Portugal","🇵🇹",23,"Right",187,60*M,"Current UCL"),
+  P("Leroy Sané",83,"FWD","Bayern Munich","Germany","🇩🇪",29,"Left",183,45*M,"Current UCL"),
+  P("Michael Olise",84,"FWD","Bayern Munich","France","🇫🇷",23,"Right",174,60*M,"Current UCL"),
+  P("Konrad Laimer",81,"MID","Bayern Munich","Austria","🇦🇹",27,"Right",178,30*M,"Current UCL"),
+
+  // Wonderkids (+22)
+  P("Pau Víctor",78,"FWD","Barcelona","Spain","🇪🇸",23,"Right",180,30*M,"Wonderkids"),
+  P("Facundo Buonanotte",79,"MID","Brighton","Argentina","🇦🇷",20,"Left",170,30*M,"Wonderkids"),
+  P("Luis Guilherme",78,"FWD","West Ham","Brazil","🇧🇷",19,"Right",172,25*M,"Wonderkids"),
+  P("Geovany Quenda",80,"FWD","Sporting CP","Portugal","🇵🇹",18,"Right",165,50*M,"Wonderkids"),
+  P("Gabriel Moscardo",77,"MID","Corinthians","Brazil","🇧🇷",19,"Right",183,25*M,"Wonderkids"),
+  P("Franco Mastantuono",80,"MID","River Plate","Argentina","🇦🇷",17,"Right",174,35*M,"Wonderkids"),
+  P("Claudio Echeverri",79,"MID","Man City","Argentina","🇦🇷",19,"Left",165,30*M,"Wonderkids"),
+  P("Dean Huijsen",80,"DEF","Real Madrid","Netherlands","🇳🇱",20,"Left",195,45*M,"Wonderkids"),
+  P("Archie Gray",78,"MID","Tottenham","England","🏴",19,"Right",180,35*M,"Wonderkids"),
+  P("Myles Lewis-Skelly",79,"DEF","Arsenal","England","🏴",18,"Left",175,40*M,"Wonderkids"),
+  P("Ethan Nwaneri",78,"MID","Arsenal","England","🏴",18,"Right",175,35*M,"Wonderkids"),
+  P("Max Dowman",75,"MID","Arsenal","England","🏴",15,"Right",165,20*M,"Wonderkids"),
+  P("Kendry Páez",77,"MID","Chelsea","Ecuador","🇪🇨",18,"Right",168,25*M,"Wonderkids"),
+  P("Nico Paz",81,"MID","Como","Argentina","🇦🇷",21,"Left",180,40*M,"Wonderkids"),
+  P("Lamine Camara",80,"MID","Monaco","Senegal","🇸🇳",21,"Right",180,35*M,"Wonderkids"),
+  P("Assan Ouedraogo",77,"MID","RB Leipzig","Germany","🇩🇪",19,"Right",180,25*M,"Wonderkids"),
+  P("Diego Coppola",76,"DEF","Hellas Verona","Italy","🇮🇹",21,"Right",191,20*M,"Wonderkids"),
+  P("Jorrel Hato",81,"DEF","Chelsea","Netherlands","🇳🇱",19,"Left",185,40*M,"Wonderkids"),
+  P("Alejandro Garnacho",82,"FWD","Man United","Argentina","🇦🇷",21,"Left",180,50*M,"Wonderkids"),
+  P("Rico Lewis",79,"DEF","Man City","England","🏴",20,"Right",170,35*M,"Wonderkids"),
+  P("Jamie Gittens",79,"FWD","Chelsea","England","🏴",21,"Left",176,40*M,"Wonderkids"),
+  P("Konstantinos Karetsas",76,"MID","Genk","Belgium","🇧🇪",17,"Left",178,20*M,"Wonderkids"),
+
+  // National Teams (+25)
+  P("Ilkay Gündoğan",84,"MID","Germany","Germany","🇩🇪",34,"Right",180,15*M,"National Teams"),
+  P("Christian Pulisic",83,"FWD","USA","USA","🇺🇸",26,"Right",177,45*M,"National Teams"),
+  P("Weston McKennie",78,"MID","USA","USA","🇺🇸",26,"Right",185,25*M,"National Teams"),
+  P("Antonee Robinson",78,"DEF","USA","USA","🇺🇸",27,"Left",180,25*M,"National Teams"),
+  P("Hirving Lozano",79,"FWD","Mexico","Mexico","🇲🇽",29,"Right",175,15*M,"National Teams"),
+  P("Edson Álvarez",80,"MID","Mexico","Mexico","🇲🇽",27,"Right",187,30*M,"National Teams"),
+  P("Keylor Navas",82,"GK","Costa Rica","Costa Rica","🇨🇷",38,"Right",185,5*M,"National Teams"),
+  P("Thomas Partey",81,"MID","Ghana","Ghana","🇬🇭",31,"Right",185,15*M,"National Teams"),
+  P("Mohammed Kudus",83,"MID","Ghana","Ghana","🇬🇭",25,"Right",180,55*M,"National Teams"),
+  P("Wilfried Zaha",79,"FWD","Ivory Coast","Ivory Coast","🇨🇮",32,"Right",180,15*M,"National Teams"),
+  P("Franck Kessié",80,"MID","Ivory Coast","Ivory Coast","🇨🇮",28,"Right",180,20*M,"National Teams"),
+  P("Riyad Mahrez",84,"FWD","Algeria","Algeria","🇩🇿",34,"Left",179,20*M,"National Teams"),
+  P("Sofyan Amrabat",79,"MID","Morocco","Morocco","🇲🇦",28,"Right",191,20*M,"National Teams"),
+  P("Yassine Bounou",82,"GK","Morocco","Morocco","🇲🇦",34,"Left",192,15*M,"National Teams"),
+  P("Hakim Ziyech",81,"MID","Morocco","Morocco","🇲🇦",32,"Left",181,15*M,"National Teams"),
+  P("Marcus Thuram",84,"FWD","France","France","🇫🇷",27,"Left",192,75*M,"National Teams"),
+  P("Granit Xhaka",83,"MID","Switzerland","Switzerland","🇨🇭",32,"Left",188,20*M,"National Teams"),
+  P("Xherdan Shaqiri",81,"MID","Switzerland","Switzerland","🇨🇭",33,"Left",169,10*M,"National Teams"),
+  P("Piotr Zieliński",81,"MID","Poland","Poland","🇵🇱",31,"Right",180,20*M,"National Teams"),
+  P("Dominik Szoboszlai",84,"MID","Hungary","Hungary","🇭🇺",24,"Right",186,70*M,"National Teams"),
+  P("Victor Boniface",81,"FWD","Nigeria","Nigeria","🇳🇬",24,"Right",192,40*M,"National Teams"),
+  P("Ademola Lookman",82,"FWD","Nigeria","Nigeria","🇳🇬",27,"Left",178,45*M,"National Teams"),
+  P("Toni Kroos (National)",89,"MID","Germany","Germany","🇩🇪",35,"Right",183,20*M,"National Teams"),
+  P("Alphonso Davies (National)",85,"DEF","Canada","Canada","🇨🇦",25,"Left",181,65*M,"National Teams"),
+  P("Mohamed Salah (National)",89,"FWD","Egypt","Egypt","🇪🇬",33,"Left",175,50*M,"National Teams"),
+
+  // Current PL (+11)
+  P("Youri Tielemans",81,"MID","Aston Villa","Belgium","🇧🇪",28,"Right",176,25*M,"Current PL"),
+  P("Ollie Watkins",85,"FWD","Aston Villa","England","🏴",29,"Right",180,60*M,"Current PL"),
+  P("Matty Cash",79,"DEF","Aston Villa","Poland","🇵🇱",27,"Right",187,25*M,"Current PL"),
+  P("Amadou Onana",80,"MID","Aston Villa","Belgium","🇧🇪",23,"Right",195,35*M,"Current PL"),
+  P("Dominic Solanke",80,"FWD","Tottenham","England","🏴",27,"Right",188,40*M,"Current PL"),
+  P("Pedro Porro",81,"DEF","Tottenham","Spain","🇪🇸",25,"Right",178,45*M,"Current PL"),
+  P("Micky van de Ven",81,"DEF","Tottenham","Netherlands","🇳🇱",23,"Left",193,45*M,"Current PL"),
+  P("Bryan Mbeumo",82,"FWD","Brentford","Cameroon","🇨🇲",25,"Right",171,45*M,"Current PL"),
+  P("Yoane Wissa",79,"FWD","Brentford","DR Congo","🇨🇩",28,"Left",180,30*M,"Current PL"),
+  P("Pervis Estupiñán",80,"DEF","Brighton","Ecuador","🇪🇨",26,"Left",175,35*M,"Current PL"),
+  P("Justin Kluivert",79,"FWD","Bournemouth","Netherlands","🇳🇱",25,"Right",180,30*M,"Current PL"),
+
+  // ===== EXPANSION BATCH 2 — every category to 55+ players (550+ total) =====
+
+  // Icons (+11)
+  P("Ronald Koeman (Icon)",88,"DEF","Retired","Netherlands","🇳🇱",61,"Right",181,55*M,"Icons"),
+  P("Marco van Basten (Icon)",93,"FWD","Retired","Netherlands","🇳🇱",60,"Right",188,95*M,"Icons"),
+  P("Frank Rijkaard (Icon)",89,"MID","Retired","Netherlands","🇳🇱",62,"Right",188,58*M,"Icons"),
+  P("Lothar Matthäus (Icon)",91,"MID","Retired","Germany","🇩🇪",63,"Right",180,68*M,"Icons"),
+  P("Jürgen Klinsmann (Icon)",89,"FWD","Retired","Germany","🇩🇪",60,"Right",181,58*M,"Icons"),
+  P("Marcel Desailly (Icon)",87,"DEF","Retired","France","🇫🇷",56,"Right",188,48*M,"Icons"),
+  P("Youri Djorkaeff (Icon)",86,"MID","Retired","France","🇫🇷",56,"Right",175,42*M,"Icons"),
+  P("Fabio Cannavaro (Icon)",90,"DEF","Retired","Italy","🇮🇹",51,"Right",176,60*M,"Icons"),
+  P("Demetrio Albertini (Icon)",85,"MID","Retired","Italy","🇮🇹",53,"Right",180,35*M,"Icons"),
+  P("Clarence Seedorf (Icon)",89,"MID","Retired","Netherlands","🇳🇱",48,"Left",180,58*M,"Icons"),
+  P("Iker Casillas (Icon)",90,"GK","Retired","Spain","🇪🇸",44,"Right",182,72*M,"Icons"),
+
+  // Legends (+11)
+  P("Sócrates (Legend)",90,"MID","Retired","Brazil","🇧🇷",'-',"Right",192,45*M,"Legends"),
+  P("Carlos Alberto",89,"DEF","Retired","Brazil","🇧🇷",'-',"Right",171,50*M,"Legends"),
+  P("Jairzinho",90,"FWD","Retired","Brazil","🇧🇷",'-',"Right",178,55*M,"Legends"),
+  P("Tostão",87,"FWD","Retired","Brazil","🇧🇷",'-',"Right",172,38*M,"Legends"),
+  P("Bobby Charlton (Legend)",89,"MID","Retired","England","🏴",'-',"Right",179,55*M,"Legends"),
+  P("Nobby Stiles",81,"MID","Retired","England","🏴",'-',"Right",168,18*M,"Legends"),
+  P("Geoff Hurst",85,"FWD","Retired","England","🏴",'-',"Right",180,32*M,"Legends"),
+  P("Gordon West",78,"GK","Retired","England","🏴",'-',"Right",180,12*M,"Legends"),
+  P("Sándor Kocsis",88,"FWD","Retired","Hungary","🇭🇺",'-',"Right",178,42*M,"Legends"),
+  P("Nándor Hidegkuti",86,"FWD","Retired","Hungary","🇭🇺",'-',"Right",172,32*M,"Legends"),
+  P("József Bozsik",85,"MID","Retired","Hungary","🇭🇺",'-',"Right",172,30*M,"Legends"),
+
+  // Prime LaLiga (+11)
+  P("Ronaldinho (LaLiga Prime)",95,"FWD","Barcelona","Brazil","🇧🇷",25,"Right",181,125*M,"Prime LaLiga"),
+  P("Xavi Hernández (Prime LaLiga)",90,"MID","Barcelona","Spain","🇪🇸",26,"Right",170,72*M,"Prime LaLiga"),
+  P("Eto'o (LaLiga Prime)",90,"FWD","Barcelona","Cameroon","🇨🇲",25,"Right",180,72*M,"Prime LaLiga"),
+  P("Deco (LaLiga Prime 2)",87,"MID","Barcelona","Portugal","🇵🇹",28,"Right",172,55*M,"Prime LaLiga"),
+  P("Giovanni van Bronckhorst (Prime)",84,"DEF","Barcelona","Netherlands","🇳🇱",28,"Left",180,32*M,"Prime LaLiga"),
+  P("Thierry Henry (LaLiga Prime)",88,"FWD","Barcelona","France","🇫🇷",32,"Right",188,45*M,"Prime LaLiga"),
+  P("Gerard Piqué (Prime LaLiga)",88,"DEF","Barcelona","Spain","🇪🇸",28,"Right",194,58*M,"Prime LaLiga"),
+  P("Ángel Di María (Prime LaLiga)",87,"MID","Real Madrid","Argentina","🇦🇷",26,"Left",180,55*M,"Prime LaLiga"),
+  P("Mesut Özil (Prime LaLiga)",87,"MID","Real Madrid","Germany","🇩🇪",22,"Left",180,50*M,"Prime LaLiga"),
+  P("Gonzalo Higuaín (Prime LaLiga)",86,"FWD","Real Madrid","Argentina","🇦🇷",25,"Right",184,48*M,"Prime LaLiga"),
+  P("Esteban Cambiasso (Prime)",84,"MID","Real Madrid","Argentina","🇦🇷",23,"Right",180,28*M,"Prime LaLiga"),
+
+  // Prime PL (+11)
+  P("Didier Drogba (PL Prime)",90,"FWD","Chelsea","Ivory Coast","🇨🇮",28,"Right",190,72*M,"Prime PL"),
+  P("Frank Lampard (PL Prime)",89,"MID","Chelsea","England","🏴",28,"Right",184,58*M,"Prime PL"),
+  P("Claude Makélélé (Prime)",86,"MID","Chelsea","France","🇫🇷",30,"Right",168,40*M,"Prime PL"),
+  P("William Gallas (Prime)",84,"DEF","Chelsea","France","🇫🇷",26,"Right",180,32*M,"Prime PL"),
+  P("Didier Deschamps (PL era)",82,"MID","Chelsea","France","🇫🇷",29,"Right",171,25*M,"Prime PL"),
+  P("Robert Pirès (PL Prime 2)",86,"MID","Arsenal","France","🇫🇷",26,"Left",183,40*M,"Prime PL"),
+  P("Nicolas Anelka (Prime)",85,"FWD","Arsenal","France","🇫🇷",22,"Right",181,38*M,"Prime PL"),
+  P("Emmanuel Adebayor (Prime)",83,"FWD","Arsenal","Togo","🇹🇬",24,"Right",192,32*M,"Prime PL"),
+  P("Cesc Fàbregas (Prime PL)",86,"MID","Arsenal","Spain","🇪🇸",22,"Right",175,45*M,"Prime PL"),
+  P("Samir Nasri (Prime)",83,"MID","Arsenal","France","🇫🇷",23,"Right",175,32*M,"Prime PL"),
+  P("Michael Carrick (Prime)",83,"MID","Man United","England","🏴",28,"Right",185,30*M,"Prime PL"),
+
+  // Current LaLiga (+11)
+  P("Alexander Sørloth",82,"FWD","Atlético Madrid","Norway","🇳🇴",29,"Right",195,35*M,"Current LaLiga"),
+  P("Julián Álvarez (LaLiga)",86,"FWD","Atlético Madrid","Argentina","🇦🇷",25,"Right",170,90*M,"Current LaLiga"),
+  P("Rodrigo De Paul",82,"MID","Atlético Madrid","Argentina","🇦🇷",30,"Right",180,25*M,"Current LaLiga"),
+  P("Koke",82,"MID","Atlético Madrid","Spain","🇪🇸",33,"Right",176,15*M,"Current LaLiga"),
+  P("Ferran Torres",81,"FWD","Barcelona","Spain","🇪🇸",25,"Right",184,35*M,"Current LaLiga"),
+  P("Iñigo Martínez (LaLiga)",82,"DEF","Barcelona","Spain","🇪🇸",34,"Left",180,10*M,"Current LaLiga"),
+  P("Pau Cubarsí (LaLiga)",83,"DEF","Barcelona","Spain","🇪🇸",18,"Right",180,60*M,"Current LaLiga"),
+  P("Endrick (LaLiga)",81,"FWD","Real Madrid","Brazil","🇧🇷",19,"Right",176,55*M,"Current LaLiga"),
+  P("Brahim Díaz",82,"MID","Real Madrid","Morocco","🇲🇦",25,"Left",172,40*M,"Current LaLiga"),
+  P("Éder Militão",84,"DEF","Real Madrid","Brazil","🇧🇷",27,"Right",186,50*M,"Current LaLiga"),
+  P("Ferland Mendy",81,"DEF","Real Madrid","France","🇫🇷",30,"Left",180,30*M,"Current LaLiga"),
+
+  // Prime UCL (+11)
+  P("Sergio Ramos (Prime UCL)",92,"DEF","Real Madrid","Spain","🇪🇸",29,"Right",184,85*M,"Prime UCL"),
+  P("Toni Kroos (Prime UCL)",90,"MID","Real Madrid","Germany","🇩🇪",27,"Right",183,75*M,"Prime UCL"),
+  P("Luka Modrić (Prime UCL)",91,"MID","Real Madrid","Croatia","🇭🇷",30,"Right",172,78*M,"Prime UCL"),
+  P("Karim Benzema (Prime UCL)",91,"FWD","Real Madrid","France","🇫🇷",28,"Right",185,82*M,"Prime UCL"),
+  P("Marcelo (Prime UCL)",88,"DEF","Real Madrid","Brazil","🇧🇷",27,"Left",174,58*M,"Prime UCL"),
+  P("Neymar Jr (Prime UCL)",92,"FWD","Barcelona","Brazil","🇧🇷",23,"Right",175,98*M,"Prime UCL"),
+  P("Luis Suárez (Prime UCL)",93,"FWD","Barcelona","Uruguay","🇺🇾",29,"Right",182,92*M,"Prime UCL"),
+  P("Sergio Busquets (Prime UCL)",89,"MID","Barcelona","Spain","🇪🇸",26,"Right",189,65*M,"Prime UCL"),
+  P("Zlatan Ibrahimović (Prime UCL)",92,"FWD","AC Milan","Sweden","🇸🇪",30,"Right",195,80*M,"Prime UCL"),
+  P("Ronaldinho (Prime UCL 2)",95,"FWD","Barcelona","Brazil","🇧🇷",25,"Right",181,128*M,"Prime UCL"),
+  P("Kaká (Prime UCL 2)",92,"MID","AC Milan","Brazil","🇧🇷",25,"Right",186,96*M,"Prime UCL"),
+
+  // Current UCL (+11)
+  P("Achraf Hakimi (Current UCL)",86,"DEF","PSG","Morocco","🇲🇦",27,"Right",181,68*M,"Current UCL"),
+  P("Ousmane Dembélé (Current UCL)",87,"FWD","PSG","France","🇫🇷",29,"Left",178,62*M,"Current UCL"),
+  P("Marquinhos",85,"DEF","PSG","Brazil","🇧🇷",31,"Right",183,40*M,"Current UCL"),
+  P("Nuno Mendes",84,"DEF","PSG","Portugal","🇵🇹",23,"Left",176,55*M,"Current UCL"),
+  P("Warren Zaïre-Emery (UCL)",83,"MID","PSG","France","🇫🇷",20,"Right",174,72*M,"Current UCL"),
+  P("Serge Gnabry",83,"FWD","Bayern Munich","Germany","🇩🇪",29,"Right",176,40*M,"Current UCL"),
+  P("Leon Goretzka",82,"MID","Bayern Munich","Germany","🇩🇪",30,"Right",189,30*M,"Current UCL"),
+  P("Manuel Neuer (UCL)",86,"GK","Bayern Munich","Germany","🇩🇪",39,"Right",193,10*M,"Current UCL"),
+  P("Denzel Dumfries",82,"DEF","Inter Milan","Netherlands","🇳🇱",29,"Right",188,35*M,"Current UCL"),
+  P("Yann Sommer",83,"GK","Inter Milan","Switzerland","🇨🇭",36,"Right",183,10*M,"Current UCL"),
+  P("Marcus Thuram (UCL)",84,"FWD","Inter Milan","France","🇫🇷",27,"Left",192,70*M,"Current UCL"),
+
+  // Wonderkids (+11)
+  P("Endrick (WK)",81,"FWD","Real Madrid","Brazil","🇧🇷",19,"Right",176,55*M,"Wonderkids"),
+  P("Warren Zaïre-Emery (WK)",83,"MID","PSG","France","🇫🇷",20,"Right",174,72*M,"Wonderkids"),
+  P("Kobbie Mainoo (WK)",82,"MID","Man United","England","🏴",20,"Right",180,55*M,"Wonderkids"),
+  P("Arda Güler (WK)",82,"MID","Real Madrid","Turkey","🇹🇷",21,"Left",173,50*M,"Wonderkids"),
+  P("Rodrigo Mora (WK)",80,"MID","Porto","Portugal","🇵🇹",17,"Right",167,45*M,"Wonderkids"),
+  P("Antonio Nusa (WK)",80,"FWD","RB Leipzig","Norway","🇳🇴",20,"Right",184,40*M,"Wonderkids"),
+  P("Chido Obi-Martin (WK)",76,"FWD","Man United","Denmark","🇩🇰",17,"Right",180,20*M,"Wonderkids"),
+  P("Yamal Camara (WK)",78,"FWD","Monaco","France","🇫🇷",18,"Right",178,35*M,"Wonderkids"),
+  P("Samu Omorodion (WK)",80,"FWD","Porto","Spain","🇪🇸",20,"Right",187,40*M,"Wonderkids"),
+  P("Malick Fofana (WK)",78,"FWD","Lyon","Belgium","🇧🇪",20,"Left",178,35*M,"Wonderkids"),
+  P("Désiré Doué (WK)",83,"FWD","PSG","France","🇫🇷",19,"Right",179,65*M,"Wonderkids"),
+
+  // National Teams (+11)
+  P("Kai Havertz",83,"FWD","Germany","Germany","🇩🇪",26,"Right",193,55*M,"National Teams"),
+  P("Jamal Musiala (National)",87,"MID","Germany","Germany","🇩🇪",22,"Right",184,110*M,"National Teams"),
+  P("Kingsley Coman",84,"FWD","France","France","🇫🇷",29,"Left",180,40*M,"National Teams"),
+  P("Aurélien Tchouaméni",84,"MID","France","France","🇫🇷",25,"Right",187,65*M,"National Teams"),
+  P("Theo Hernández (National)",84,"DEF","France","France","🇫🇷",27,"Left",184,50*M,"National Teams"),
+  P("Bukayo Saka (National)",88,"FWD","England","England","🏴",23,"Left",178,140*M,"National Teams"),
+  P("Jordan Pickford",81,"GK","England","England","🏴",31,"Right",185,25*M,"National Teams"),
+  P("Kyle Walker",80,"DEF","England","England","🏴",34,"Right",183,10*M,"National Teams"),
+  P("Nicolás Otamendi (National)",83,"DEF","Argentina","Argentina","🇦🇷",37,"Right",183,3*M,"National Teams"),
+  P("Enzo Fernández",84,"MID","Argentina","Argentina","🇦🇷",24,"Right",178,75*M,"National Teams"),
+  P("Alexis Mac Allister",84,"MID","Argentina","Argentina","🇦🇷",26,"Right",176,65*M,"National Teams"),
+
+  // Current PL (+11)
+  P("Rodri (PL)",89,"MID","Man City","Spain","🇪🇸",29,"Right",191,110*M,"Current PL"),
+  P("Josko Gvardiol",83,"DEF","Man City","Croatia","🇭🇷",23,"Left",185,75*M,"Current PL"),
+  P("Erling Haaland (PL)",92,"FWD","Man City","Norway","🇳🇴",25,"Left",195,190*M,"Current PL"),
+  P("Mateo Kovačić",81,"MID","Man City","Croatia","🇭🇷",31,"Right",177,25*M,"Current PL"),
+  P("Ederson (PL)",86,"GK","Man City","Brazil","🇧🇷",31,"Left",188,35*M,"Current PL"),
+  P("Virgil van Dijk (PL)",89,"DEF","Liverpool","Netherlands","🇳🇱",34,"Right",195,25*M,"Current PL"),
+  P("Andrew Robertson",82,"DEF","Liverpool","Scotland","🏴",31,"Left",178,20*M,"Current PL"),
+  P("Dominik Szoboszlai (PL)",83,"MID","Liverpool","Hungary","🇭🇺",24,"Right",186,65*M,"Current PL"),
+  P("Luis Díaz",84,"FWD","Liverpool","Colombia","🇨🇴",28,"Left",175,55*M,"Current PL"),
+  P("Nicolas Jackson",80,"FWD","Chelsea","Senegal","🇸🇳",23,"Left",186,40*M,"Current PL"),
+  P("Levi Colwill",81,"DEF","Chelsea","England","🏴",22,"Left",187,45*M,"Current PL"),
+];
+
+const FORMATIONS = {
+  11: ['4-4-2','4-3-3','3-5-2','4-2-3-1','3-4-3','4-2-4','5-3-2','4-1-4-1','5-4-1','4-5-1','4-4-1-1','4-3-2-1','3-4-2-1','5-2-3','3-3-4'],
+  7:  ['3-2-1','2-3-1','3-1-2','2-2-2','1-3-2'],
+  5:  ['2-1-1','1-2-1','2-2','1-1-2'],
+};
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+// Which player categories feed each format. null = draw from the whole database (mixed exhibitions).
+const FORMAT_CATEGORIES = {
+  icons:        ['Icons','Legends'],
+  primeLaLiga:  ['Prime LaLiga'],
+  primePL:      ['Prime PL'],
+  currentLaLiga:['Current LaLiga'],
+  currentPL:    ['Current PL'],
+  primeUCL:     ['Prime UCL'],
+  currentUCL:   ['Current UCL'],
+  five:         null,
+  seven:        null,
+  custom:       null,
+};
+// Fallback priority when a format's own category runs short — closest-fitting categories first,
+// so a top-up never reaches for something as mismatched as a retired Icon in a Prime PL auction
+// unless every closer option has already been exhausted.
+const FORMAT_FALLBACK_CATS = {
+  icons:        ['Icons','Legends'],
+  primeLaLiga:  ['Prime LaLiga','Prime UCL','Icons','Legends'],
+  primePL:      ['Prime PL','Prime UCL','Icons','Legends'],
+  currentLaLiga:['Current LaLiga','Current UCL','National Teams','Wonderkids'],
+  currentPL:    ['Current PL','Current UCL','National Teams','Wonderkids'],
+  primeUCL:     ['Prime UCL','Icons','Legends'],
+  currentUCL:   ['Current UCL','Current PL','Current LaLiga','National Teams','Wonderkids'],
+};
+function buildInitialPool(formatKey){
+  const cats = FORMAT_CATEGORIES[formatKey];
+  let list = cats? PLAYERS.filter(p=>cats.includes(p.cat)) : PLAYERS.slice();
+  if(list.length===0) list = PLAYERS.slice();
+  return shuffle(list).map(p=>p.id);
+}
+// If there aren't enough players in the pool for every manager to fill a squad, top it up
+// from the closest-matching categories first (falling back to the whole database only as a
+// last resort) rather than letting the auction run dry or mixing in unrelated eras/leagues.
+function ensurePoolSize(l){
+  const active = Object.values(l.members).filter(m=>!m.spectator);
+  const needed = active.length * l.squadSize;
+  if(l.pool.length >= needed) return 0;
+  const already = new Set(l.pool);
+  const soldIds = new Set(l.soldLog.map(s=>s.playerId));
+  const gap = needed - l.pool.length;
+  const chain = FORMAT_FALLBACK_CATS[l.formatKey];
+  const candidates = [];
+  const seen = new Set();
+  function addCandidates(pool){
+    pool.forEach(p=>{ if(!already.has(p.id) && !soldIds.has(p.id) && !seen.has(p.id)){ candidates.push(p); seen.add(p.id); } });
+  }
+  if(chain){
+    for(const cat of chain){
+      if(candidates.length >= gap) break;
+      addCandidates(shuffle(PLAYERS.filter(p=>p.cat===cat)));
+    }
+  }
+  if(candidates.length < gap) addCandidates(shuffle(PLAYERS)); // absolute last resort
+  const toAdd = candidates.slice(0, gap);
+  if(toAdd.length){ l.pool = shuffle([...l.pool, ...toAdd.map(p=>p.id)]); }
+  return toAdd.length;
+}
+function pitchSizeFor(formatKey, squadSize){
+  const f = FORMATS[formatKey];
+  if(f && f.pitchSize) return f.pitchSize; // fixed formats always use their real on-pitch size
+  // Custom mode has no fixed pitch size, so infer a sensible one from the chosen squad size.
+  if(squadSize<=6) return 5;
+  if(squadSize<=9) return 7;
+  return 11;
+}
+function formationSetFor(formatKey, squadSize){ return FORMATIONS[pitchSizeFor(formatKey, squadSize)]; }
+function defaultFormation(formatKey, squadSize){ return formationSetFor(formatKey, squadSize)[0]; }
+
+// Row labels back-to-front (defense first), matching the number groups in each formation string.
+const FORMATION_LABELS = {
+  '4-4-2':   [['LB','CB','CB','RB'],['LM','CM','CM','RM'],['ST','ST']],
+  '4-3-3':   [['LB','CB','CB','RB'],['CM','CM','CM'],['LW','ST','RW']],
+  '3-5-2':   [['CB','CB','CB'],['LM','CM','CM','CM','RM'],['ST','ST']],
+  '4-2-3-1': [['LB','CB','CB','RB'],['CDM','CDM'],['LW','CAM','RW'],['ST']],
+  '3-4-3':   [['CB','CB','CB'],['LM','CM','CM','RM'],['LW','ST','RW']],
+  '4-2-4':   [['LB','CB','CB','RB'],['CM','CM'],['LW','ST','ST','RW']],
+  '5-3-2':   [['LWB','CB','CB','CB','RWB'],['CM','CM','CM'],['ST','ST']],
+  '4-1-4-1': [['LB','CB','CB','RB'],['CDM'],['LM','CM','CM','RM'],['ST']],
+  '5-4-1':   [['LWB','CB','CB','CB','RWB'],['LM','CM','CM','RM'],['ST']],
+  '4-5-1':   [['LB','CB','CB','RB'],['LM','CM','CM','CM','RM'],['ST']],
+  '4-4-1-1': [['LB','CB','CB','RB'],['LM','CM','CM','RM'],['CAM'],['ST']],
+  '4-3-2-1': [['LB','CB','CB','RB'],['CDM','CM','CM'],['LW','RW'],['ST']],
+  '3-4-2-1': [['CB','CB','CB'],['LWB','CM','CM','RWB'],['CAM','CAM'],['ST']],
+  '5-2-3':   [['LWB','CB','CB','CB','RWB'],['CM','CM'],['LW','ST','RW']],
+  '3-3-4':   [['CB','CB','CB'],['CM','CM','CM'],['LW','ST','ST','RW']],
+  '3-2-1':   [['CB','CB','CB'],['CM','CM'],['ST']],
+  '2-3-1':   [['CB','CB'],['LM','CM','RM'],['ST']],
+  '3-1-2':   [['CB','CB','CB'],['CM'],['ST','ST']],
+  '2-2-2':   [['CB','CB'],['CM','CM'],['ST','ST']],
+  '1-3-2':   [['CB'],['LM','CM','RM'],['ST','ST']],
+  '2-1-1':   [['CB','CB'],['CM'],['ST']],
+  '1-2-1':   [['CB'],['LM','RM'],['ST']],
+  '2-2':     [['CB','CB'],['ST','ST']],
+  '1-1-2':   [['CB'],['CM'],['ST','ST']],
+};
+function labelBucket(label){
+  if(['LB','CB','RB','LWB','RWB'].includes(label)) return 'DEF';
+  if(['CDM','CM','CAM','LM','RM'].includes(label)) return 'MID';
+  return 'FWD'; // LW, ST, RW
+}
+// Computes which squad player sits in each formation slot: respects a manager's manual
+// assignments (m.lineup) where still valid, and auto-fills the rest from the squad pool.
+function computeLineup(m, l){
+  const formation = m.formation || defaultFormation(l.formatKey, l.squadSize);
+  const rows = FORMATION_LABELS[formation] || [];
+  const squadPlayers = m.squad.map(id=>PLAYERS.find(p=>p.id===id)).filter(Boolean);
+  const squadIds = new Set(squadPlayers.map(p=>p.id));
+  const manual = m.lineup || {};
+  const assigned = new Set();
+  let gkId = (manual.gk && squadIds.has(manual.gk)) ? manual.gk : null;
+  if(gkId) assigned.add(gkId);
+  const slots = [{key:'gk', label:'GK', bucket:'GK', playerId:gkId}];
+  rows.forEach((row,ri)=>{
+    row.forEach((label,ci)=>{
+      const key = `r${ri}_${ci}`;
+      const bucket = labelBucket(label);
+      let pid = manual[key];
+      if(pid && squadIds.has(pid) && !assigned.has(pid)){ assigned.add(pid); } else { pid = null; }
+      slots.push({key, label, bucket, row:ri, col:ci, playerId:pid});
+    });
+  });
+  const extras = squadPlayers.filter(p=>!assigned.has(p.id));
+  return {slots, extras, rows};
+}
+function posBucket(pos){return pos;}
+function ratingClass(pos){return {"GK":"b-gk","DEF":"b-def","MID":"b-mid","FWD":"b-fwd"}[pos]||"b-mid";}
+const POS_BIAS = {
+  GK:{PAC:0.5,SHO:0.3,PAS:0.6,DRI:0.4,DEF:0.7,PHY:0.7},
+  DEF:{PAC:0.75,SHO:0.45,PAS:0.65,DRI:0.6,DEF:0.92,PHY:0.85},
+  MID:{PAC:0.75,SHO:0.7,PAS:0.9,DRI:0.85,DEF:0.65,PHY:0.75},
+  FWD:{PAC:0.88,SHO:0.92,PAS:0.7,DRI:0.85,DEF:0.35,PHY:0.75},
+};
+const POS_PRIMARY_CANDIDATES = { GK:['DEF'], DEF:['DEF','PHY','PAS'], MID:['PAS','DRI','SHO'], FWD:['SHO','PAC','DRI'] };
+function seedRand(str,salt){ let h=0; for(let i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i)+salt)|0; return (Math.abs(h)%21)-10; }
+// Hand-tuned peak profiles for marquee current stars, so their standout trait matches reality
+// rather than a generic formula.
+const STAR_OVERRIDES = [
+  {match:'Haaland', attrs:{PAC:91,SHO:96,PAS:70,DRI:80,DEF:45,PHY:90}},
+  {match:'Mbappé', attrs:{PAC:97,SHO:90,PAS:80,DRI:92,DEF:36,PHY:78}},
+  {match:'Vinícius', attrs:{PAC:95,SHO:84,PAS:78,DRI:93,DEF:29,PHY:72}},
+  {match:'Yamal', attrs:{PAC:87,SHO:80,PAS:86,DRI:91,DEF:35,PHY:60}},
+  {match:'Messi', attrs:{PAC:80,SHO:90,PAS:91,DRI:96,DEF:30,PHY:65}},
+  {match:'Cristiano Ronaldo', attrs:{PAC:85,SHO:94,PAS:78,DRI:85,DEF:34,PHY:88}},
+  {match:'Ronaldinho', attrs:{PAC:82,SHO:84,PAS:86,DRI:96,DEF:30,PHY:68}},
+  {match:'Pelé', attrs:{PAC:88,SHO:92,PAS:85,DRI:92,DEF:35,PHY:75}},
+  {match:'Diego Maradona', attrs:{PAC:85,SHO:87,PAS:89,DRI:97,DEF:30,PHY:68}},
+  {match:'Bellingham', attrs:{PAC:82,SHO:85,PAS:83,DRI:87,DEF:70,PHY:84}},
+  {match:'Rodri', attrs:{PAC:68,SHO:75,PAS:89,DRI:82,DEF:88,PHY:82}},
+];
+function synthAttrs(p){
+  const override = STAR_OVERRIDES.find(s=>p.name.includes(s.match));
+  if(override) return override.attrs;
+  const bias = POS_BIAS[p.pos]||POS_BIAS.MID;
+  const candidates = POS_PRIMARY_CANDIDATES[p.pos]||['PAS'];
+  const primary = candidates[Math.abs(seedRand(p.id,99))%candidates.length];
+  const weakCandidates = Object.keys(bias).filter(k=>k!==primary);
+  const weak = weakCandidates[Math.abs(seedRand(p.id,55))%weakCandidates.length];
+  const out={};
+  Object.keys(bias).forEach((k,i)=>{
+    let base = Math.round(p.rating*bias[k]) + seedRand(p.id,i*7)*0.6;
+    if(k===weak) base -= 10 + (Math.abs(seedRand(p.id,77))%8);
+    out[k] = Math.max(25, Math.min(99, Math.round(base)));
+  });
+  // guarantee a genuine standout: the primary attribute clears ~90 for anyone rated 80+
+  if(p.rating>=80) out[primary] = Math.max(out[primary], Math.min(99, 88 + Math.round((p.rating-80)/2)));
+  else out[primary] = Math.max(out[primary], Math.min(94, p.rating+8));
+  return out;
+}
+function attrBarsHtml(attrs){
+  const order=['PAC','SHO','PAS','DRI','DEF','PHY'];
+  return `<div class="attr-grid">${order.map(k=>`
+    <div class="attr-item">
+      <div class="attr-label">${k}<span class="attr-val">${attrs[k]}</span></div>
+      <div class="rating-bar"><div class="rating-bar-fill" style="width:${attrs[k]}%;"></div></div>
+    </div>`).join('')}</div>`;
+}
+const RARITY_MAP = {
+  'Icons':{tag:'ICON', cls:'rarity-icon'}, 'Legends':{tag:'LEGEND', cls:'rarity-icon'},
+  'Prime LaLiga':{tag:'PRIME', cls:'rarity-prime'}, 'Prime PL':{tag:'PRIME', cls:'rarity-prime'}, 'Prime UCL':{tag:'PRIME', cls:'rarity-prime'},
+  'Current LaLiga':{tag:'CURRENT', cls:'rarity-current'}, 'Current PL':{tag:'CURRENT', cls:'rarity-current'},
+  'Current UCL':{tag:'UCL', cls:'rarity-ucl'},
+  'Wonderkids':{tag:'WONDERKID', cls:'rarity-wonderkid'}, 'National Teams':{tag:'NATIONAL', cls:'rarity-national'},
+};
+function rarityInfo(cat){ return RARITY_MAP[cat] || {tag:'PLAYER', cls:'rarity-current'}; }
+function tiltCard(e, el){
+  const r = el.getBoundingClientRect();
+  const x = (e.clientX - r.left)/r.width - 0.5;
+  const y = (e.clientY - r.top)/r.height - 0.5;
+  el.style.transform = `perspective(700px) rotateY(${(x*12).toFixed(2)}deg) rotateX(${(-y*12).toFixed(2)}deg) scale(1.03)`;
+}
+function resetTilt(el){ el.style.transform = 'perspective(700px) rotateY(0deg) rotateX(0deg) scale(1)'; }
+function fmt(n){
+  if(n>=1e9) return "$"+(n/1e9).toFixed(2)+"B";
+  if(n>=1e6) return "$"+(n/1e6).toFixed(1).replace(/\.0$/,'')+"M";
+  if(n>=1e3) return "$"+(n/1e3).toFixed(0)+"K";
+  return "$"+n;
+}
+function uid(){return Math.random().toString(36).slice(2,9);}
+function code(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s='';for(let i=0;i<5;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
+function remainingSeconds(l){
+  if(l.status==='paused') return l.pausedRemaining!=null? l.pausedRemaining : l.timerLen;
+  return phaseRemainingSeconds(l);
+}
+// Anchors this client's own local stopwatch the moment it sees phaseNonce change, then counts
+// down using only this client's own clock. Never compares one device's Date.now() to another's.
+function syncPhase(l){
+  if(S.phaseNonceSeen !== l.phaseNonce){
+    S.phaseNonceSeen = l.phaseNonce;
+    S.phaseStartedAt = Date.now();
+    S.phaseMsSeen = l.phaseMs;
+  }
+}
+function phaseRemainingMs(l){
+  syncPhase(l);
+  if(S.phaseStartedAt==null) return 0;
+  return Math.max(0, S.phaseMsSeen - (Date.now()-S.phaseStartedAt));
+}
+function phaseRemainingSeconds(l){ return Math.ceil(phaseRemainingMs(l)/1000); }
+// Bumps the countdown to a fresh duration and marks it as a new phase for every client to
+// re-anchor against, locally, on their own clock.
+function armPhase(l, durationMs){
+  l.phaseNonce = (l.phaseNonce||0) + 1;
+  l.phaseMs = durationMs;
+}
+function reviewRemaining(l){
+  if(l.status!=='ended') return 0;
+  return phaseRemainingSeconds(l);
+}
+function fmtClock(secs){ const m=Math.floor(secs/60), s=secs%60; return `${m}:${s.toString().padStart(2,'0')}`; }
+function initials(n){return n.split(' ').filter(w=>!/[()]/.test(w)).map(w=>w[0]).slice(0,2).join('').toUpperCase();}
+// Small original SVG "player badge" — a simple head-and-shoulders silhouette colored by
+// position, with initials on the head. Used everywhere a player avatar shows up, since we
+// have no way to fetch real photos here (and wouldn't want to use real players' likenesses
+// without rights to them anyway).
+function playerIcon(p, size){
+  size = size || 48;
+  const posColors = {GK:'#e0b23c', DEF:'#4f8ff5', MID:'#3ecf8e', FWD:'#e05a5a'};
+  const c = posColors[p.pos] || '#9aa0a8';
+  return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" style="display:block;">
+    <circle cx="32" cy="32" r="32" fill="${c}" opacity=".22"/>
+    <circle cx="32" cy="23" r="10.5" fill="${c}"/>
+    <path d="M13 60 C13 44.5 20.5 36 32 36 C43.5 36 51 44.5 51 60 Z" fill="${c}"/>
+    <text x="32" y="27.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="10.5" fill="rgba(10,10,12,.85)">${initials(p.name)}</text>
+  </svg>`;
+}
+
+/* ---------------------------- STORAGE HELPERS ---------------------------- */
+async function sGet(key, shared){try{const r= await window.storage.get(key, !!shared); return r? JSON.parse(r.value): null;}catch(e){return null;}}
+async function sSet(key, val, shared, _attempt){
+  _attempt = _attempt || 0;
+  try{
+    await window.storage.set(key, JSON.stringify(val), !!shared);
+    return true;
+  }catch(e){
+    // The storage backend occasionally returns a transient "Internal server error" —
+    // retry a couple of times with a short backoff before giving up. This was the
+    // real cause behind a lot of the "sometimes it works, sometimes it doesn't"
+    // multiplayer flakiness: a write would silently fail and every other client
+    // would just never see that change.
+    if(_attempt < 2){
+      await new Promise(r=>setTimeout(r, 300*(_attempt+1)));
+      return sSet(key, val, shared, _attempt+1);
+    }
+    console.error('Storage write failed after retries:', e);
+    return false;
+  }
+}
+// Writes league state and warns the user if it truly didn't stick after retries,
+// instead of silently rendering as if the save succeeded.
+async function persistLeague(l){
+  const ok = await sSet('league:'+l.code, l, true);
+  if(!ok) toast('⚠️ Sync hiccup — that action may not have saved. Try it again.');
+  return ok;
+}
+
+/* ---------------------------- APP STATE ---------------------------- */
+const S = {
+  screen:'login', // login, lobby, room
+  me:null, // {id,name}
+  code:null,
+  league:null, // shared doc
+  poll:null,
+  hostTick:null,
+  soundOn:true,
+  tab:'auction',
+  lastSeenChat:0,
+  openSlot:null,
+  editingStartPrice:false,
+  storageOk:null,
+  storageErr:'',
+  phaseNonceSeen:null,
+  phaseStartedAt:null,
+  phaseMsSeen:0,
+  lastBidTs:0,
+  pendingJoinCode:null, // set when the page was opened via a ?code= invite link
+  previewHostName:null, // host name shown on the login screen for that invite link, if found
+  zeroSince:null, // when the bid timer first hit 0, used by the non-host finalize fallback
+};
+
+function toast(msg){
+  const el=document.createElement('div'); el.className='toast'; el.textContent=msg;
+  document.body.appendChild(el); setTimeout(()=>{el.style.transition='opacity .4s'; el.style.opacity='0'; setTimeout(()=>el.remove(),400)},2600);
+}
+function beep(freq=440,dur=.12,type='sine',vol=.06){
+  if(!S.soundOn) return;
+  try{
+    const ctx = beep._ctx || (beep._ctx = new (window.AudioContext||window.webkitAudioContext)());
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type=type; o.frequency.value=freq; g.gain.value=vol;
+    o.connect(g); g.connect(ctx.destination); o.start();
+    g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime+dur);
+    o.stop(ctx.currentTime+dur+.02);
+  }catch(e){}
+}
+function sfxBid(){beep(660,.09,'triangle',.05);}
+function sfxSold(){beep(220,.05,'sawtooth',.05); setTimeout(()=>beep(440,.08,'sawtooth',.06),90); setTimeout(()=>beep(660,.16,'sawtooth',.07),200);}
+function sfxWarn(){beep(880,.08,'square',.04);}
+function sfxNotify(){beep(520,.06,'sine',.05);}
+
+function confetti(){
+  const colors=['#d4af37','#22c58b','#f6f5f1','#e14b4b'];
+  for(let i=0;i<60;i++){
+    const d=document.createElement('div'); d.className='confetti-piece';
+    d.style.left=Math.random()*100+'vw'; d.style.background=colors[i%colors.length];
+    d.style.animation=`fall ${1.4+Math.random()*1.4}s ease-in forwards`;
+    d.style.animationDelay=(Math.random()*.4)+'s';
+    document.body.appendChild(d); setTimeout(()=>d.remove(),3200);
+  }
+}
+
+/* ---------------------------- LEAGUE MODEL ---------------------------- */
+function newLeague(hostId, hostName, formatKey, opts){
+  const f = FORMATS[formatKey];
+  const budget = opts.budget || f.budget;
+  const squad = opts.squad || f.squad;
+  const timerLen = opts.timer || f.timer;
+  return {
+    code: S.code,
+    formatKey, formatLabel:f.label, budget, squadSize:squad, timerLen,
+    positionRestrictions: opts.positionRestrictions !== undefined? opts.positionRestrictions : true,
+    allowDuplicates: !!opts.allowDuplicates,
+    nominationOrder: opts.nominationOrder || 'round-robin',
+    hostId, hostName,
+    members: { [hostId]: {id:hostId, name:hostName, budget, spent:0, squad:[], connected:true, spectator:false, formation:defaultFormation(formatKey, squad), lineup:{}} },
+    status:'waiting', // waiting, running, paused, ended
+    pool: buildInitialPool(formatKey), // shuffled, category-matched pool of player ids
+    soldLog: [], // {playerId, buyerId, price, ts}
+    passLog: [],
+    currentPlayerId:null,
+    currentBid:0, currentBidder:null,
+    bidHistory: [],
+    outForCurrentPlayer: [],
+    lastSale: null,
+    // Countdown system: each client runs its own local stopwatch, anchored the moment it
+    // observes phaseNonce change, counting down phaseMs using only its OWN clock's passage
+    // of time. This makes every timer immune to clock skew between devices — we never once
+    // compare one device's Date.now() to a timestamp written by a different device.
+    phaseNonce: 0,
+    phaseMs: 0,
+    awaitingReady: false, // true while waiting for majority ready-check before bidding starts
+    awaitingHostPick: false, // true while the host has a 20s window to choose the next player
+    awaitingIntermission: false, // true during the 5s pause between a sale and the next reveal
+    readyVotes: [],
+    notInterested: [], // members who opted out of bidding on the current player before bidding even starts
+    pausedRemaining: null,
+    nominationIdx: 0,
+    lastUpdate: Date.now(),
+    chat: [{sys:true, text:`League created by ${hostName}. Format: ${f.label}`, ts:Date.now()}],
+    version: 0,
+  };
+}
+
+async function saveLeague(mutator, _attempt){
+  _attempt = _attempt || 0;
+  // read-modify-write against freshest copy to reduce clobbering
+  let l = await sGet('league:'+S.code, true);
+  if(!l) l = S.league;
+  const versionBefore = l.version||0;
+  mutator(l);
+  l.lastUpdate = Date.now(); l.version=versionBefore+1;
+  // One more check right before committing: if something else changed in the moments
+  // between our read and our write (very possible — the storage backend itself can lag
+  // or retry), redo the mutation on top of that fresher data instead of blindly writing
+  // over it. Without this, a slightly-late write (e.g. a second quick click while the
+  // first one was still saving) could silently overwrite a newer state and make the bid
+  // timer appear to jump backward/reset.
+  if(_attempt < 2){
+    const check = await sGet('league:'+S.code, true);
+    if(check && (check.version||0) > versionBefore){
+      return saveLeague(mutator, _attempt+1);
+    }
+  }
+  S.league = l;
+  await persistLeague(l);
+  render();
+}
+
+async function pollLeague(){
+  if(!S.code) return;
+  const l = await sGet('league:'+S.code, true);
+  if(!l) return;
+  // Only ever move forward in version. Without this guard, a poll fetch that was already
+  // in flight when we made our own local write can resolve afterwards with the older,
+  // pre-write snapshot and briefly roll the whole UI (and the bid timer) back a step —
+  // which is exactly what caused the repeated 25/24 flicker and the "multiple refreshes".
+  if(S.league && (l.version||0) <= (S.league.version||0)) return;
+  const prev = S.league;
+  S.league = l;
+  reactToChanges(prev, l);
+  render();
+}
+function reactToChanges(prev, cur){
+  if(!prev) return;
+  if(cur.chat && cur.chat.length > (prev.chat||[]).length){
+    const last = cur.chat[cur.chat.length-1];
+    if(!last.sys && last.uid !== S.me.id) sfxNotify();
+  }
+  if(cur.currentBidder && cur.currentBid > (prev.currentBid||0)){
+    flashBidAmount();
+    if(cur.currentBidder!==S.me.id){
+      sfxBid();
+      if(prev.currentBidder===S.me.id) toast("You've been outbid!");
+    }
+  }
+  if((cur.soldLog||[]).length > (prev.soldLog||[]).length){
+    const sale = cur.soldLog[cur.soldLog.length-1];
+    const p = PLAYERS.find(x=>x.id===sale.playerId);
+    const buyer = cur.members[sale.buyerId];
+    sfxSold();
+    if(sale.buyerId===S.me.id){ confetti(); toast(`🎉 You won ${p.name} for ${fmt(sale.price)}!`); }
+    else { toast(`✅ ${p.name} sold to ${buyer? buyer.name:'?'} for ${fmt(sale.price)}`); }
+  }
+}
+
+/* ---------------------------- HOST AUCTION ENGINE ---------------------------- */
+function isHost(){ return S.league && S.league.hostId===S.me.id; }
+
+function pickNextPlayerId(l){
+  const available = l.pool.filter(id=>{
+    if(l.allowDuplicates) return true;
+    return !Object.values(l.members).some(m=>m.squad.includes(id));
+  });
+  if(available.length===0) return null;
+  // simple order: as listed
+  return available[0];
+}
+
+async function hostStartAuction(){
+  S.editingStartPrice = false;
+  await saveLeague(l=>{
+    l.status='running';
+    if(!l.currentPlayerId && !l.awaitingHostPick){
+      const added = ensurePoolSize(l);
+      if(added>0) l.chat.push({sys:true, text:`Pool topped up with ${added} extra players so everyone can fill a full squad.`, ts:Date.now()});
+      if(pickNextPlayerId(l)){
+        l.awaitingHostPick = true;
+        armPhase(l, 20000);
+        l.chat.push({sys:true, text:'Auction started by host. 🎯 Host has 20s to choose the first player (or one is auto-picked).', ts:Date.now()});
+      } else {
+        l.chat.push({sys:true, text:'Auction started by host.', ts:Date.now()});
+      }
+    }
+  });
+  startClock();
+}
+function hostPause(){
+  saveLeague(l=>{
+    l.pausedRemaining = remainingSeconds(l);
+    l.status='paused';
+    l.chat.push({sys:true,text:'Host paused the auction.',ts:Date.now()});
+  });
+}
+function hostResume(){
+  saveLeague(l=>{
+    l.status='running';
+    armPhase(l, (l.pausedRemaining!=null? l.pausedRemaining : l.timerLen)*1000);
+    l.pausedRemaining = null;
+    l.chat.push({sys:true,text:'Host resumed the auction.',ts:Date.now()});
+  });
+}
+const REVIEW_MS = 3*60*1000; // 3 minutes to finalize lineups before the summary reveals
+function hostEnd(){
+  saveLeague(l=>{
+    l.status='ended'; l.currentPlayerId=null;
+    armPhase(l, REVIEW_MS);
+    l.chat.push({sys:true,text:'🏁 Host ended the auction. Finalize your lineup before the summary reveals.',ts:Date.now()});
+  });
+}
+function hostRevealSummaryNow(){
+  saveLeague(l=>{ armPhase(l, 0); l.chat.push({sys:true,text:'Host revealed the summary early.',ts:Date.now()}); });
+}
+function hostSkip(){
+  S.editingStartPrice = false;
+  saveLeague(l=>{
+    if(l.currentPlayerId){ l.passLog.push({playerId:l.currentPlayerId, ts:Date.now()}); l.pool = l.pool.filter(id=>id!==l.currentPlayerId); }
+    l.currentPlayerId=null; l.currentBid=0; l.currentBidder=null; l.bidHistory=[]; l.outForCurrentPlayer=[];
+    l.readyVotes=[]; l.notInterested=[]; l.awaitingReady = false;
+    if(pickNextPlayerId(l)){
+      l.awaitingHostPick = true;
+      armPhase(l, 20000);
+      l.chat.push({sys:true,text:'Host skipped the player. 🎯 Host has 20s to choose the next player (or one is auto-picked).',ts:Date.now()});
+    } else {
+      l.status='ended'; armPhase(l, REVIEW_MS);
+      l.chat.push({sys:true,text:'🏁 All players processed. Auction complete! Finalize your lineup before the summary reveals.',ts:Date.now()});
+    }
+  });
+}
+function hostSkipToFive(){
+  saveLeague(l=>{
+    if(l.status==='running' && l.currentPlayerId && remainingSeconds(l)>5){
+      armPhase(l, 5000);
+      l.chat.push({sys:true,text:'⏩ Host fast-forwarded to the final 5 seconds!',ts:Date.now()});
+    }
+  });
+}
+function submitStartPrice(){
+  const v = parseInt(document.getElementById('startPriceIn').value);
+  if(!v || v<=0) return toast('Enter a valid starting price.');
+  S.editingStartPrice = false;
+  saveLeague(l=>{
+    if(l.currentPlayerId && !l.currentBidder){
+      l.currentBid = v;
+      const p = PLAYERS.find(x=>x.id===l.currentPlayerId);
+      l.chat.push({sys:true, text:`Host set the starting price for ${p?p.name:'this player'} to ${fmt(v)}.`, ts:Date.now()});
+    }
+  });
+}
+function hostUndo(){
+  saveLeague(l=>{
+    const last = l.soldLog.pop();
+    if(last){
+      const m = l.members[last.buyerId];
+      if(m){ m.budget += last.price; m.spent -= last.price; m.squad = m.squad.filter(id=>id!==last.playerId); }
+      l.pool.unshift(last.playerId);
+      l.chat.push({sys:true,text:`Host undid the sale of ${PLAYERS.find(p=>p.id===last.playerId).name}.`,ts:Date.now()});
+    }
+  });
+}
+function hostKick(memberId){
+  saveLeague(l=>{ if(l.members[memberId]){ l.chat.push({sys:true,text:`${l.members[memberId].name} was removed by host.`,ts:Date.now()}); delete l.members[memberId]; } });
+}
+function hostAdjustBudget(memberId, delta){
+  saveLeague(l=>{ if(l.members[memberId]) l.members[memberId].budget += delta; });
+}
+
+function startClock(){
+  stopClock();
+  let warned = false;
+  S.clockTick = setInterval(async ()=>{
+    if(S.screen!=='room' || !S.league) return;
+    const l = S.league;
+    if(l.status==='paused'){ warned=false; return; }
+    if(l.status==='ended'){
+      if(phaseRemainingMs(l)>0 && (S.tab==='auction'||S.tab==='summary')) render();
+      return;
+    }
+    if(l.status!=='running'){ warned=false; return; }
+    if(!l.currentPlayerId && l.awaitingIntermission){
+      const remIntermission = phaseRemainingSeconds(l);
+      if(remIntermission>0){ if(!patchIntermissionCountdown(l)){ if(S.tab==='auction') render(); } return; }
+      if(!isHost()) return;
+      await hostBeginPick();
+      return;
+    }
+    if(!l.currentPlayerId && l.awaitingHostPick){
+      const remPick = phaseRemainingSeconds(l);
+      if(remPick>0){
+        if(!patchHostPickCountdown(l)){ if(S.tab==='auction'||S.tab==='host') render(); }
+        return;
+      }
+      if(!isHost()) return;
+      await hostAutoPickExpiredPick();
+      return;
+    }
+    if(!l.currentPlayerId) return;
+    if(l.awaitingReady) return; // no live countdown here — poll already re-renders when someone votes
+    const remaining = remainingSeconds(l);
+    if(remaining<=3 && remaining>0 && !warned){ warned=true; sfxWarn(); }
+    if(remaining>3) warned=false;
+    if(remaining>0){
+      if(S.tab==='auction'){ if(!patchTimerDisplay()) render(); }
+      S.zeroSince = null;
+      return;
+    }
+    if(isHost()){ await hostFinalizeCurrentPlayer(); return; }
+    // Safety net: normally only the host finalizes a sale. But if the host's tab is
+    // backgrounded/throttled (very common on mobile), nothing would ever advance and
+    // everyone else would be stuck watching the timer sit at 0 indefinitely. If it's
+    // been stuck for more than a few seconds, another client steps in instead.
+    if(!S.zeroSince) S.zeroSince = Date.now();
+    if(Date.now() - S.zeroSince > 4000){ S.zeroSince = null; await hostFinalizeCurrentPlayer(); }
+  }, 1000);
+}
+function stopClock(){ if(S.clockTick){ clearInterval(S.clockTick); S.clockTick=null; } }
+// Updates just the countdown ring/badge in place each second, instead of re-rendering the
+// whole page — avoids the "flashing/refreshing" look a full render() would cause every tick.
+function patchTimerDisplay(){
+  const l = S.league;
+  if(!l || !l.currentPlayerId) return false;
+  const remaining = remainingSeconds(l);
+  const ringColor = remaining<=5? 'var(--crimson)': remaining<=10? 'var(--gold)':'var(--emerald)';
+  const pct = Math.min(100, Math.round((remaining/l.timerLen)*100));
+  const circle = document.getElementById('timerRingCircle');
+  const text = document.getElementById('timerRingText');
+  const badge = document.getElementById('timerBadge');
+  if(!circle || !text || !badge) return false;
+  const r=52, C=2*Math.PI*r;
+  circle.setAttribute('stroke-dashoffset', C*(1-pct/100));
+  circle.setAttribute('stroke', ringColor);
+  text.textContent = remaining;
+  text.style.color = ringColor;
+  badge.textContent = '⏱ '+remaining+'s';
+  badge.style.color = ringColor;
+  badge.style.borderColor = ringColor;
+  badge.classList.toggle('pulse-red-timer', remaining<=5);
+  document.getElementById('timerRing')?.classList.toggle('pulse-red-timer', remaining<=5);
+  return true;
+}
+
+async function hostFinalizeCurrentPlayer(){
+  let l = await sGet('league:'+S.code, true) || S.league;
+  if(l.status!=='running'){ S.league=l; render(); return; }
+  if(!l.currentPlayerId){ S.league=l; render(); return; } // someone else already finalized this round
+  if(phaseRemainingMs(l) > 0){ S.league=l; render(); return; } // a last-second bid already extended it
+  const soldPlayer = PLAYERS.find(x=>x.id===l.currentPlayerId);
+  if(l.currentBidder){
+    const buyer = l.members[l.currentBidder];
+    buyer.budget -= l.currentBid; buyer.spent += l.currentBid; buyer.squad.push(l.currentPlayerId);
+    l.soldLog.push({playerId:l.currentPlayerId, buyerId:l.currentBidder, price:l.currentBid, ts:Date.now()});
+    l.lastSale = {playerName:soldPlayer.name, buyerName:buyer.name, price:l.currentBid, unsold:false, ts:Date.now()};
+  } else {
+    l.passLog.push({playerId:l.currentPlayerId, ts:Date.now()});
+    l.lastSale = {playerName:soldPlayer.name, buyerName:null, price:0, unsold:true, ts:Date.now()};
+  }
+  l.pool = l.pool.filter(id=>id!==l.currentPlayerId);
+  const activeManagers = Object.values(l.members).filter(m=>!m.spectator);
+  const allSquadsFull = activeManagers.length>0 && activeManagers.every(m=>m.squad.length>=l.squadSize);
+  l.currentPlayerId = null; l.currentBid = 0; l.currentBidder = null; l.bidHistory=[]; l.outForCurrentPlayer=[];
+  l.readyVotes=[]; l.notInterested=[]; l.awaitingReady=false;
+  if(allSquadsFull){
+    l.status='ended'; armPhase(l, REVIEW_MS);
+    l.chat.push({sys:true,text:'🏁 Every squad is full — auction complete! Finalize your lineup before the summary reveals.',ts:Date.now()});
+  } else if(!pickNextPlayerId(l)){
+    l.status='ended'; armPhase(l, REVIEW_MS);
+    l.chat.push({sys:true,text:'🏁 All players processed. Auction complete! Finalize your lineup before the summary reveals.',ts:Date.now()});
+  } else {
+    // pause on the sold/unsold banner for 5s before revealing the next player
+    l.awaitingIntermission = true;
+    armPhase(l, 5000);
+  }
+  l.lastUpdate=Date.now(); l.version=(l.version||0)+1;
+  S.league=l; await persistLeague(l); render();
+}
+// Opens the host's 20s "choose the next player" window instead of auto-picking immediately.
+async function hostBeginPick(){
+  S.editingStartPrice = false;
+  let l = await sGet('league:'+S.code, true) || S.league;
+  if(l.status!=='running' || l.currentPlayerId || l.awaitingHostPick){ S.league=l; render(); return; }
+  if(!l.awaitingIntermission){ S.league=l; render(); return; }
+  if(phaseRemainingMs(l) > 0){ S.league=l; render(); return; }
+  l.awaitingIntermission = false;
+  if(!pickNextPlayerId(l)){
+    l.status='ended'; armPhase(l, REVIEW_MS);
+    l.chat.push({sys:true,text:'🏁 All players processed. Auction complete! Finalize your lineup before the summary reveals.',ts:Date.now()});
+  } else {
+    l.awaitingHostPick = true;
+    armPhase(l, 20000);
+    l.chat.push({sys:true,text:'🎯 Host has 20s to choose the next player (or one is auto-picked).',ts:Date.now()});
+  }
+  l.lastUpdate=Date.now(); l.version=(l.version||0)+1;
+  S.league=l; await persistLeague(l); render();
+}
+// Called by the host's own clock tick once the 20s picking window has expired without a choice.
+async function hostAutoPickExpiredPick(){
+  let l = await sGet('league:'+S.code, true) || S.league;
+  if(l.status!=='running' || !l.awaitingHostPick){ S.league=l; render(); return; }
+  if(phaseRemainingMs(l) > 0){ S.league=l; render(); return; }
+  const nid = pickNextPlayerId(l);
+  l.awaitingHostPick = false;
+  if(!nid){
+    l.status='ended'; armPhase(l, REVIEW_MS);
+    l.chat.push({sys:true,text:'🏁 All players processed. Auction complete! Finalize your lineup before the summary reveals.',ts:Date.now()});
+  } else {
+    const np = PLAYERS.find(x=>x.id===nid);
+    l.currentPlayerId = nid;
+    l.currentBid = np.start;
+    l.currentBidder = null; l.bidHistory=[]; l.outForCurrentPlayer=[];
+    l.readyVotes=[]; l.notInterested=[]; l.awaitingReady = true;
+    armPhase(l, 0);
+    l.chat.push({sys:true,text:`⏱ Time's up — auto-picked ${np.name}.`,ts:Date.now()});
+  }
+  l.lastUpdate=Date.now(); l.version=(l.version||0)+1;
+  S.league=l; await persistLeague(l); render();
+}
+// Host manually chooses which player goes up next, during the 20s picking window.
+async function hostPickPlayer(playerId){
+  await saveLeague(l=>{
+    if(!l.awaitingHostPick) return;
+    const p = PLAYERS.find(x=>x.id===playerId);
+    if(!p) return;
+    if(!l.pool.includes(p.id)) return toast(`${p.name} isn't available in the pool.`);
+    l.pool = l.pool.filter(id=>id!==p.id);
+    l.currentPlayerId = p.id;
+    l.currentBid = p.start;
+    l.currentBidder = null; l.bidHistory=[]; l.outForCurrentPlayer=[];
+    l.readyVotes=[]; l.notInterested=[]; l.awaitingReady = true;
+    l.awaitingHostPick = false;
+    armPhase(l, 0);
+    l.chat.push({sys:true, text:`🎯 Host chose ${p.name} to go up for auction.`, ts:Date.now()});
+  });
+}
+async function hostSubmitPick(){
+  const input = document.getElementById('hostPickInput');
+  const val = (input?.value||'').trim().toLowerCase();
+  if(!val) return toast('Type a player name first.');
+  const p = PLAYERS.find(x=>x.name.toLowerCase()===val);
+  if(!p) return toast('No exact match — pick a name from the suggestions list.');
+  await hostPickPlayer(p.id);
+  if(input) input.value='';
+}
+// Lets the host skip waiting out the 20s window and auto-pick immediately.
+async function hostPickRandomNow(){
+  let l = await sGet('league:'+S.code, true) || S.league;
+  if(!l.awaitingHostPick){ S.league=l; render(); return; }
+  const nid = pickNextPlayerId(l);
+  l.awaitingHostPick = false;
+  if(!nid){
+    l.status='ended'; armPhase(l, REVIEW_MS);
+    l.chat.push({sys:true,text:'🏁 All players processed. Auction complete! Finalize your lineup before the summary reveals.',ts:Date.now()});
+  } else {
+    const np = PLAYERS.find(x=>x.id===nid);
+    l.currentPlayerId = nid;
+    l.currentBid = np.start;
+    l.currentBidder = null; l.bidHistory=[]; l.outForCurrentPlayer=[];
+    l.readyVotes=[]; l.notInterested=[]; l.awaitingReady = true;
+    armPhase(l, 0);
+    l.chat.push({sys:true,text:`🎲 Host auto-picked ${np.name}.`,ts:Date.now()});
+  }
+  l.lastUpdate=Date.now(); l.version=(l.version||0)+1;
+  S.league=l; await persistLeague(l); render();
+}
+// Patches the live countdown text for the host-pick / intermission windows in place, so an
+// in-progress keystroke in the "type a player" input isn't interrupted by a full re-render.
+function patchIntermissionCountdown(l){
+  const el = document.getElementById('intermissionCountdown');
+  if(!el) return false;
+  el.textContent = `Next player in ${phaseRemainingSeconds(l)}s…`;
+  return true;
+}
+function patchHostPickCountdown(l){
+  const rem = phaseRemainingSeconds(l);
+  let patched = false;
+  const el1 = document.getElementById('hostPickCountdown'); if(el1){ el1.textContent = rem+'s'; patched=true; }
+  const el2 = document.getElementById('hostPickWaitCountdown'); if(el2){ el2.textContent = rem+'s'; patched=true; }
+  return patched;
+}
+
+// Shortens the current player's timer to 2s once nobody eligible remains to keep bidding —
+// runs opportunistically off already-fetched state, so it costs no extra storage reads.
+function maybeShortenTimer(l){
+  if(!l.currentPlayerId || l.status!=='running') return false;
+  const outList = l.outForCurrentPlayer || [];
+  const active = Object.values(l.members).filter(m=>!m.spectator);
+  if(active.length<=1) return false; // nothing meaningful to fast-forward with only one bidder
+  const stillIn = active.filter(m=> !outList.includes(m.id) && m.squad.length<l.squadSize);
+  let shorten=false;
+  if(l.currentBidder){ if(stillIn.filter(m=>m.id!==l.currentBidder).length===0) shorten=true; }
+  else if(stillIn.length===0) shorten=true;
+  if(shorten && phaseRemainingSeconds(l) > 2){ armPhase(l, 2000); return true; }
+  return false;
+}
+
+/* ---------------------------- CLIENT ACTIONS ---------------------------- */
+function checkReadyMajority(l){
+  if(!l.awaitingReady) return;
+  const active = Object.values(l.members).filter(m=>!m.spectator);
+  const needed = Math.floor(active.length/2)+1;
+  const votes = (l.readyVotes||[]).filter(id=>l.members[id] && !l.members[id].spectator);
+  if(votes.length>=needed){
+    l.awaitingReady = false;
+    armPhase(l, l.timerLen*1000);
+    // anyone who said they weren't interested in this player sits out the bidding automatically
+    l.outForCurrentPlayer = Array.from(new Set([...(l.outForCurrentPlayer||[]), ...(l.notInterested||[])]));
+    l.chat.push({sys:true,text:'✅ Majority ready — bidding is live!',ts:Date.now()});
+  }
+}
+async function toggleReady(){
+  await saveLeague(l=>{
+    if(!l.awaitingReady || !l.currentPlayerId) return;
+    const me = l.members[S.me.id];
+    if(!me || me.spectator) return;
+    l.readyVotes = l.readyVotes || [];
+    const idx = l.readyVotes.indexOf(S.me.id);
+    if(idx>=0) l.readyVotes.splice(idx,1);
+    else {
+      l.readyVotes.push(S.me.id);
+      // opting back in to bid clears a previous "not interested" opinion
+      l.notInterested = (l.notInterested||[]).filter(id=>id!==S.me.id);
+    }
+    checkReadyMajority(l);
+  });
+}
+// Lets a manager say up front they don't want to bid on the current player — it still
+// counts toward starting the round (so they don't hold up the majority), but marks them
+// out for this player once bidding begins, same as if they'd hit "Out" mid-round.
+async function toggleNotInterested(){
+  await saveLeague(l=>{
+    if(!l.awaitingReady || !l.currentPlayerId) return;
+    const me = l.members[S.me.id];
+    if(!me || me.spectator) return;
+    l.notInterested = l.notInterested || [];
+    const idx = l.notInterested.indexOf(S.me.id);
+    if(idx>=0){ l.notInterested.splice(idx,1); }
+    else {
+      l.notInterested.push(S.me.id);
+      l.readyVotes = l.readyVotes || [];
+      if(!l.readyVotes.includes(S.me.id)) l.readyVotes.push(S.me.id);
+    }
+    checkReadyMajority(l);
+  });
+}
+function hostForceStartBidding(){
+  saveLeague(l=>{
+    if(l.awaitingReady && l.currentPlayerId){
+      l.awaitingReady = false;
+      armPhase(l, l.timerLen*1000);
+      l.outForCurrentPlayer = Array.from(new Set([...(l.outForCurrentPlayer||[]), ...(l.notInterested||[])]));
+      l.chat.push({sys:true,text:'⚡ Host forced bidding to start.',ts:Date.now()});
+    }
+  });
+}
+async function hostAssignPlayer(){
+  const input = document.getElementById('assignPlayerInput');
+  const val = (input?.value||'').trim().toLowerCase();
+  if(!val) return toast('Type a player name first.');
+  const p = PLAYERS.find(x=>x.name.toLowerCase()===val);
+  if(!p) return toast('No exact match — pick a name from the suggestions list.');
+  await saveLeague(l=>{
+    if(l.status!=='running') return toast('Start the auction first.');
+    l.pool = l.pool.filter(id=>id!==p.id);
+    l.currentPlayerId = p.id;
+    l.currentBid = p.start;
+    l.currentBidder = null; l.bidHistory=[]; l.outForCurrentPlayer=[];
+    l.readyVotes=[]; l.notInterested=[]; l.awaitingReady = true;
+    l.awaitingIntermission = false; l.awaitingHostPick = false;
+    armPhase(l, 0);
+    l.chat.push({sys:true, text:`🎯 Host assigned ${p.name} to go up for auction.`, ts:Date.now()});
+  });
+  if(input) input.value='';
+}
+async function placeBid(amount){
+  let l = await sGet('league:'+S.code, true) || S.league;
+  const me = l.members[S.me.id];
+  if(!me || me.spectator) return toast("Spectators can't bid.");
+  if(l.status!=='running') return toast('Auction is not live.');
+  if(!l.currentPlayerId) return;
+  if(l.awaitingReady) return toast('Bidding hasn\'t started yet — waiting on the ready-check.');
+  if((l.outForCurrentPlayer||[]).includes(S.me.id)) return toast("You're out on this player — wait for the next one.");
+  if(amount<=l.currentBid) return toast('Bid must be higher than current bid.');
+  if(amount> me.budget) return toast('Not enough budget.');
+  if(l.squadSize && me.squad.length>=l.squadSize) return toast('Your squad is already full.');
+  if(l.positionRestrictions){
+    const p = PLAYERS.find(x=>x.id===l.currentPlayerId);
+    const need = positionNeed(l, me);
+    if(need[p.pos]<=0) return toast(`You already filled the ${p.pos} quota.`);
+  }
+  // Re-check for a concurrent bid right before writing — the storage layer is last-write-wins,
+  // so two people bidding within the same instant could otherwise silently clobber each other.
+  // Only ever adopt this second read if it's strictly newer than what we already have — a
+  // stale/slow read landing here (the storage backend can lag or hiccup) must never regress
+  // the bid or timer back to an older snapshot right before we write.
+  const fresh = await sGet('league:'+S.code, true);
+  if(fresh && (fresh.version||0) > (l.version||0)){
+    if(fresh.currentPlayerId !== l.currentPlayerId){ S.league=fresh; render(); return toast('That player is no longer up for auction.'); }
+    if(amount <= (fresh.currentBid||0)){
+      S.league=fresh; render();
+      return toast(`Too slow — ${fresh.members[fresh.currentBidder]?.name||'someone'} just bid ${fmt(fresh.currentBid)}.`);
+    }
+    l = fresh;
+  }
+  l.currentBid = amount; l.currentBidder = S.me.id;
+  l.bidHistory.unshift({bidder:S.me.id, name:me.name, amount, ts:Date.now()});
+  if(l.bidHistory.length>12) l.bidHistory.length=12;
+  armPhase(l, l.timerLen*1000); // every bid gives everyone the full countdown again
+  l.lastUpdate=Date.now(); l.version=(l.version||0)+1;
+  S.league=l; await persistLeague(l); render();
+  flashBidAmount();
+}
+function flashBidAmount(){
+  requestAnimationFrame(()=>{
+    const el = document.getElementById('currentBidAmt');
+    if(!el) return;
+    el.classList.remove('bid-flash'); void el.offsetWidth; el.classList.add('bid-flash');
+  });
+}
+function positionNeed(l, member){
+  const size = l.squadSize;
+  let need={GK:1, DEF:Math.round(size*0.36), MID:Math.round(size*0.36), FWD:size - 1 - Math.round(size*0.36)*2};
+  Object.keys(need).forEach(k=>{ if(need[k]<0) need[k]=0; });
+  const have={GK:0,DEF:0,MID:0,FWD:0};
+  member.squad.forEach(id=>{ const p=PLAYERS.find(x=>x.id===id); if(p) have[p.pos]=(have[p.pos]||0)+1; });
+  const remain={}; Object.keys(need).forEach(k=> remain[k]= (member.squad.length>=size)?0: 999); // relax: just cap total
+  Object.keys(need).forEach(k=> remain[k]= Math.max(0, need[k]-(have[k]||0)) + (size-Object.values(need).reduce((a,b)=>a+b,0)>0?1:0));
+  // simplify: allow bidding on any position as long as squad not full and that bucket not overfull by >150%
+  Object.keys(remain).forEach(k=> remain[k] = (member.squad.length<size)? 99:0);
+  return remain;
+}
+async function optOut(){
+  const l = await sGet('league:'+S.code, true) || S.league;
+  const me = l.members[S.me.id];
+  if(!me) return;
+  l.outForCurrentPlayer = l.outForCurrentPlayer || [];
+  if(l.outForCurrentPlayer.includes(S.me.id)) return;
+  l.outForCurrentPlayer.push(S.me.id);
+  let revertMsg = '';
+  if(l.currentBidder === S.me.id){
+    // Void this bidder's top bid so they can't win at a price they backed out of
+    if(l.bidHistory.length && l.bidHistory[0].bidder === S.me.id) l.bidHistory.shift();
+    const nextValid = l.bidHistory.find(b=> !l.outForCurrentPlayer.includes(b.bidder));
+    if(nextValid){
+      l.currentBid = nextValid.amount; l.currentBidder = nextValid.bidder;
+      revertMsg = ` Bid reverts to ${nextValid.name} at ${fmt(nextValid.amount)}.`;
+    } else {
+      const p = PLAYERS.find(x=>x.id===l.currentPlayerId);
+      l.currentBid = p? p.start : 0; l.currentBidder = null;
+      revertMsg = ` Bid resets to the starting price — ${me.name}'s bid was withdrawn.`;
+    }
+  }
+  l.chat.push({sys:true, text:`${me.name} is out of the bidding for this player.${revertMsg}`, ts:Date.now()});
+  const shortened = maybeShortenTimer(l);
+  l.lastUpdate=Date.now(); l.version=(l.version||0)+1;
+  S.league=l; await persistLeague(l); render();
+  toast(shortened? "You're out — wrapping up the bid in 2s." : "You're out — your bid was withdrawn if you were leading.");
+}
+async function sendChat(text){
+  if(!text.trim()) return;
+  await saveLeague(l=>{ l.chat.push({uid:S.me.id, name:S.me.name, text:text.trim(), ts:Date.now()}); if(l.chat.length>120) l.chat.shift(); });
+}
+
+/* ---------------------------- SESSION PERSISTENCE ---------------------------- */
+async function saveSession(){
+  await sSet('session', {id:S.me.id, name:S.me.name, code:S.code}, false);
+}
+async function clearSession(){ try{ await window.storage.delete('session', false); }catch(e){} }
+async function checkStorage(){
+  try{
+    if(typeof window.storage === 'undefined' || !window.storage){ S.storageOk=false; S.storageErr='window.storage is not available in this preview context.'; return; }
+    const testKey = 'healthcheck_'+uid();
+    await window.storage.set(testKey, '1', true);
+    const r = await window.storage.get(testKey, true);
+    S.storageOk = !!(r && r.value==='1');
+    if(!S.storageOk) S.storageErr = 'Wrote a test value but could not read it back.';
+    window.storage.delete(testKey, true).catch(()=>{});
+  }catch(e){ S.storageOk = false; S.storageErr = (e && e.message) ? e.message : String(e); }
+}
+async function retryStorageCheck(){
+  toast('Rechecking multiplayer sync…');
+  await checkStorage();
+  render();
+  toast(S.storageOk? '✅ Multiplayer sync is working now!' : '❌ Still unavailable — see the error above.');
+}
+function storageWarningHtml(){
+  if(S.storageOk!==false) return '';
+  return `<div class="glass fade-in" style="padding:16px 20px;margin-bottom:16px;border-color:var(--crimson);max-width:520px;">
+    <div style="color:#ff9d9d;font-weight:700;margin-bottom:4px;">⚠️ Multiplayer sync isn't available right now</div>
+    <div style="color:var(--muted);font-size:12.5px;line-height:1.5;">This usually means the page was opened as a downloaded file instead of the live Claude artifact link. Everyone needs to open the same <b>published/shared link</b> from Claude (not a saved .html file) — use the Share/Publish button on the artifact and send that URL instead.</div>
+    ${S.storageErr? `<div class="mono" style="color:#ff9d9d;font-size:11px;margin-top:8px;opacity:.8;">Error detail: ${escapeHtml(S.storageErr)}</div>`:''}
+    <button class="btn btn-ghost" style="margin-top:10px;padding:6px 12px;font-size:12px;" onclick="retryStorageCheck()">🔄 Recheck now</button>
+  </div>`;
+}
+async function loadPendingJoinPreview(){
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const code = (params.get('code')||'').trim().toUpperCase();
+    if(!code) return;
+    S.pendingJoinCode = code;
+    const l = await sGet('league:'+code, true);
+    if(l){
+      const host = l.members[l.hostId];
+      S.previewHostName = host? host.name : null;
+    }
+  }catch(e){ /* best-effort only — a broken/expired link just falls back to the normal screen */ }
+}
+async function tryResumeSession(){
+  await checkStorage();
+  await loadPendingJoinPreview();
+  const sess = await sGet('session', false);
+  if(!sess) { render(); return; }
+  S.me = {id:sess.id, name:sess.name};
+  if(sess.code){
+    const l = await sGet('league:'+sess.code, true);
+    if(l && l.members[sess.id]){
+      S.code = sess.code; S.league = l;
+      enterRoom();
+      toast('Welcome back — reconnected to your league.');
+      return;
+    }
+  }
+  S.screen='lobby'; render();
+}
+
+/* ---------------------------- SCREENS ---------------------------- */
+const root = document.getElementById('app');
+function render(){
+  if(S.screen==='login') return renderLogin();
+  if(S.screen==='lobby') return renderLobby();
+  if(S.screen==='room') return renderRoom();
+}
+
+function renderLogin(){
+  const nums = [10,9,7,4,1,11,8];
+  const positions = [
+    {top:'8%',left:'8%',size:74,delay:'0s',dur:'7s'},
+    {top:'14%',left:'82%',size:60,delay:'.6s',dur:'8s'},
+    {top:'70%',left:'6%',size:56,delay:'1.2s',dur:'6.5s'},
+    {top:'78%',left:'85%',size:80,delay:'.3s',dur:'7.5s'},
+    {top:'42%',left:'93%',size:50,delay:'.9s',dur:'6s'},
+    {top:'88%',left:'40%',size:58,delay:'1.5s',dur:'8.5s'},
+    {top:'4%',left:'45%',size:46,delay:'.4s',dur:'6.8s'},
+  ];
+  const bgChips = positions.map((pos,i)=>`
+    <div class="login-chip" style="top:${pos.top};left:${pos.left};width:${pos.size}px;height:${pos.size}px;font-size:${pos.size*0.36}px;
+      animation-delay:${pos.delay};animation-duration:${pos.dur};">${nums[i]}</div>`).join('');
+  root.innerHTML = `
+  <div class="login-bg">${bgChips}<div class="login-tv"></div><div class="sparkle" style="top:12%;right:8%;">✦</div><div class="sparkle" style="bottom:16%;left:10%;animation-delay:1.2s;">✦</div></div>
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;z-index:1;gap:14px;">
+    ${storageWarningHtml()}
+    <div class="glass fade-in login-shimmer" style="padding:40px 36px;max-width:420px;width:100%;">
+      <div style="text-align:center;margin-bottom:22px;">
+        <div class="spinning-ball" style="font-size:44px;">⚽</div>
+        <div class="disp" style="font-size:30px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;">AUCTION ROOM</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:4px;">Premium football auctions, with friends.</div>
+      </div>
+      <div class="field">
+        <label class="small">YOUR NAME</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">👤</span>
+          <input id="nameInput" placeholder="e.g. Alex" maxlength="20" style="padding-left:38px;"/>
+        </div>
+      </div>
+      <button class="btn btn-gold" style="width:100%;margin-top:6px;" onclick="doLogin()">Continue</button>
+      <div style="text-align:center;color:var(--gold-soft);font-size:12px;font-style:italic;margin-top:14px;">"${loginQuote()}"</div>
+      <div style="text-align:center;color:var(--muted);font-size:12px;margin-top:10px;">Guest sessions only in this demo — no password needed.</div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(212,175,55,.2);text-align:center;">
+        <div class="small" style="letter-spacing:1px;">HOST INFORMATION</div>
+        ${S.previewHostName?
+          `<div style="color:var(--white);font-weight:700;margin-top:6px;">Host: ${S.previewHostName} <span style="color:var(--gold);">★</span></div>
+           <div style="color:var(--muted);font-size:11px;margin-top:2px;">You're joining ${S.previewHostName}'s league via invite link.</div>`
+          : `<div style="color:var(--muted);font-size:12px;margin-top:6px;">Every league needs a host — create one and that's you 👑</div>`}
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('nameInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+}
+const LOGIN_QUOTES = [
+  "Legends aren't drafted. They're won, one bid at a time.",
+  "Every squad has a story — yours starts with the next hammer drop.",
+  "Patience wins auctions. Panic wins nothing.",
+  "The best XI isn't bought. It's built, bid by bid.",
+];
+function loginQuote(){ return LOGIN_QUOTES[Math.floor(Date.now()/60000)%LOGIN_QUOTES.length]; }
+async function doLogin(){
+  const v = document.getElementById('nameInput').value.trim();
+  if(!v) return toast('Enter a name to continue.');
+  S.me = {id: uid(), name: v};
+  saveSession();
+  if(S.pendingJoinCode){ await autoJoinFromLink(S.pendingJoinCode); return; }
+  S.screen='lobby'; render();
+}
+
+function renderLobby(){
+  const formatOptions = Object.entries(FORMATS).map(([k,f])=>`<option value="${k}">${f.label} — ${fmt(f.budget)}</option>`).join('');
+  const elite = PLAYERS.filter(p=>p.rating>=93);
+  const featured = elite[Math.floor(Math.random()*elite.length)] || PLAYERS[0];
+  const ronaldoCard = PLAYERS.find(p=>p.name==='Cristiano Ronaldo (Prime)');
+  const messiCard = PLAYERS.find(p=>p.name==='Lionel Messi (Prime)');
+  const restOfFame = PLAYERS.filter(p=>p!==ronaldoCard && p!==messiCard).sort((a,b)=>b.rating-a.rating).slice(0,3);
+  const hallOfFame = [ronaldoCard, messiCard, ...restOfFame].filter(Boolean);
+  const totalCats = new Set(PLAYERS.map(p=>p.cat)).size;
+  root.innerHTML = `
+  <div class="topbar">
+    <div class="brand"><div class="mark">⚽</div><span class="disp">FOOTBALL AUCTION</span></div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <span class="pill">📊 ${PLAYERS.length} Players · ${totalCats} Categories</span>
+      <button class="btn btn-ghost" style="padding:7px 12px;" onclick="toggleSound()">${S.soundOn?'🔊':'🔇'}</button>
+      <span class="pill" style="cursor:pointer;" onclick="renameProfile()">👤 ${S.me.name} ✏️</span>
+    </div>
+  </div>
+  <div class="container" style="max-width:920px;">
+    ${storageWarningHtml()}
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:20px;" id="lobbyGrid">
+      <div class="glass fade-in lobby-card tactical-board" style="padding:26px;">
+        <div class="disp" style="font-size:20px;color:var(--gold-soft);margin-bottom:14px;">🏆 CREATE A LEAGUE</div>
+        <div class="field"><label class="small">FORMAT</label><select id="fmtSel">${formatOptions}</select></div>
+        <div id="tunerBox"></div>
+        <div class="field"><label class="small">SQUAD SIZE <span id="squadHint" style="color:var(--muted);font-weight:400;text-transform:none;"></span></label><input id="squadIn" type="number" value="16" min="15" max="18"/></div>
+        <div class="field"><label class="small">TIMER (sec, 10–60)</label><input id="timerIn" type="number" value="20" min="10" max="60"/></div>
+        <div class="field" style="display:flex;gap:16px;align-items:center;">
+          <label style="display:flex;gap:6px;align-items:center;font-size:13px;"><input type="checkbox" id="posRestrict" checked style="width:auto;"/> Position rules</label>
+          <label style="display:flex;gap:6px;align-items:center;font-size:13px;"><input type="checkbox" id="allowDup" style="width:auto;"/> Allow duplicates</label>
+        </div>
+        <button class="btn btn-gold" style="width:100%;margin-top:8px;" onclick="doCreate()">Create League</button>
+      </div>
+      <div class="glass fade-in lobby-card" style="padding:26px;">
+        <div class="disp" style="font-size:20px;color:var(--gold-soft);margin-bottom:14px;">🎟 JOIN A LEAGUE</div>
+        <div class="field"><label class="small">INVITE CODE</label><input id="joinCode" placeholder="e.g. K3F9Q" maxlength="6" style="text-transform:uppercase;letter-spacing:.15em;font-weight:700;"/></div>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;margin-bottom:14px;"><input type="checkbox" id="spectate" style="width:auto;"/> Join as spectator</label>
+        <button class="btn btn-green" style="width:100%;" onclick="doJoin()">Join League</button>
+        <div style="color:var(--muted);font-size:12px;margin-top:14px;line-height:1.5;">Ask your host for the 5-letter invite code. Everyone in the league syncs live — bids, budgets, and squads update for all in a couple seconds.</div>
+      </div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+      <div class="glass fade-in lobby-card" style="padding:22px;">
+        <div class="disp" style="font-size:16px;color:var(--gold-soft);margin-bottom:12px;">⭐ FEATURED PLAYER</div>
+        <div style="display:flex;gap:14px;align-items:center;">
+          <div class="avatar" style="width:64px;height:64px;font-size:18px;background:linear-gradient(135deg,#232326,#141416);">${playerIcon(featured,64)}</div>
+          <div>
+            <div style="font-weight:800;font-size:15px;">${featured.name}</div>
+            <div style="font-size:12px;color:var(--muted);">${featured.flag} ${featured.club} · <span class="badge ${ratingClass(featured.pos)}">${featured.pos}</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <span class="pill mono" style="color:var(--gold-soft);">OVR ${featured.rating}</span>
+          <span class="pill">${fmt(featured.value)}</span>
+          <span class="fut-rarity ${rarityInfo(featured.cat).cls}" style="font-size:9px;">${rarityInfo(featured.cat).tag}</span>
+        </div>
+      </div>
+      <div class="glass fade-in lobby-card" style="padding:22px;">
+        <div class="disp" style="font-size:16px;color:var(--gold-soft);margin-bottom:12px;">🏛 HALL OF FAME</div>
+        ${hallOfFame.map((p,i)=>`<div class="bidrow"><span>${['🥇','🥈','🥉','4.','5.'][i]} ${p.name}</span><span class="mono" style="color:var(--gold-soft);">OVR ${p.rating}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('fmtSel').addEventListener('change', updateTuner);
+  updateTuner();
+}
+function renameProfile(){
+  const v = prompt('Update your display name:', S.me.name);
+  if(v && v.trim()){ S.me.name = v.trim().slice(0,20); saveSession(); render(); toast('Name updated to '+S.me.name); }
+}
+function updateTuner(){
+  const key = document.getElementById('fmtSel').value;
+  const f = FORMATS[key];
+  const squadIn = document.getElementById('squadIn');
+  squadIn.value = f.squad; squadIn.min = f.squadMin; squadIn.max = f.squadMax;
+  document.getElementById('squadHint').textContent = `${f.squadMin}–${f.squadMax} players`;
+  document.getElementById('timerIn').value = f.timer;
+  const box = document.getElementById('tunerBox');
+  if(f.tunable){
+    box.innerHTML = `<div class="field"><label class="small">BUDGET (${fmt(f.min||f.budget*0.5)} – ${fmt(f.max||f.budget*1.3)})</label>
+      <input id="budgetIn" type="number" value="${f.budget}" min="${f.min||1000000}" max="${f.max||f.budget*2}" step="1000000"/></div>`;
+  } else {
+    box.innerHTML = `<div class="field"><label class="small">BUDGET</label><input value="${fmt(f.budget)}" disabled/></div>`;
+  }
+}
+async function doCreate(){
+  const fmtKey = document.getElementById('fmtSel').value;
+  const fmtCfg = FORMATS[fmtKey];
+  let squad = parseInt(document.getElementById('squadIn').value)||fmtCfg.squad;
+  squad = Math.min(fmtCfg.squadMax, Math.max(fmtCfg.squadMin, squad));
+  const timer = Math.min(60,Math.max(10, parseInt(document.getElementById('timerIn').value)||FORMATS[fmtKey].timer));
+  const budgetEl = document.getElementById('budgetIn');
+  const budget = budgetEl? parseInt(budgetEl.value): FORMATS[fmtKey].budget;
+  const posRestrict = document.getElementById('posRestrict').checked;
+  const allowDup = document.getElementById('allowDup').checked;
+  S.code = code();
+  S.league = newLeague(S.me.id, S.me.name, fmtKey, {squad, timer, budget, positionRestrictions:posRestrict, allowDuplicates:allowDup});
+  const ok = await persistLeague(S.league);
+  if(!ok) return toast("Couldn't create the league — multiplayer sync is down right now. Please try again.");
+  await saveSession();
+  enterRoom();
+}
+async function autoJoinFromLink(code){
+  let l = await sGet('league:'+code, true);
+  if(!l){ await new Promise(r=>setTimeout(r, 500)); l = await sGet('league:'+code, true); }
+  if(!l){
+    toast('That invite link looks invalid or expired — join manually below.');
+    S.screen='lobby'; render();
+    return;
+  }
+  if(!l.members[S.me.id]){
+    l.members[S.me.id] = {id:S.me.id, name:S.me.name, budget:l.budget, spent:0, squad:[], connected:true, spectator:false, formation:defaultFormation(l.formatKey, l.squadSize), lineup:{}};
+    l.chat.push({sys:true, text:`${S.me.name} joined the league.`, ts:Date.now()});
+    l.version=(l.version||0)+1; l.lastUpdate=Date.now();
+    const ok = await persistLeague(l);
+    if(!ok){ toast("Couldn't join right now — multiplayer sync is down. Please try again."); S.screen='lobby'; render(); return; }
+  }
+  S.code=code; S.league=l; await saveSession(); enterRoom();
+}
+async function doJoin(){
+  const c = document.getElementById('joinCode').value.trim().toUpperCase();
+  if(!c) return toast('Enter an invite code.');
+  let l = await sGet('league:'+c, true);
+  if(!l){
+    // Multiplayer sync can lag a moment right after a league is created — give it one
+    // more short try before giving up, instead of immediately saying "not found".
+    await new Promise(r=>setTimeout(r, 500));
+    l = await sGet('league:'+c, true);
+  }
+  if(!l){
+    if(S.storageOk===false) return toast("Can't reach multiplayer sync — see the warning above. You likely need the live shared link, not a downloaded file.");
+    // Last resort: the code might've been stored with different spacing/case than typed —
+    // check the actual list of known leagues for a case-insensitive match.
+    try{
+      const listing = await window.storage.list('league:', true);
+      const match = (listing?.keys||[]).find(k=>k.slice('league:'.length).toUpperCase()===c);
+      if(match) l = await sGet(match, true);
+    }catch(e){ /* listing isn't critical — fall through to the plain error below */ }
+  }
+  if(!l) return toast('League not found. Double-check the code with your host — codes never use I, O, 0, or 1.');
+  const spectator = document.getElementById('spectate').checked;
+  if(!l.members[S.me.id]){
+    l.members[S.me.id] = {id:S.me.id, name:S.me.name, budget:l.budget, spent:0, squad:[], connected:true, spectator, formation:defaultFormation(l.formatKey, l.squadSize), lineup:{}};
+    l.chat.push({sys:true, text:`${S.me.name} joined the league${spectator?' as a spectator':''}.`, ts:Date.now()});
+    l.version=(l.version||0)+1; l.lastUpdate=Date.now();
+    const ok = await persistLeague(l);
+    if(!ok) return toast("Couldn't join right now — multiplayer sync is down. Please try again.");
+  }
+  S.code=l.code; S.league=l; await saveSession(); enterRoom();
+}
+function enterRoom(){
+  S.screen='room'; render();
+  if(S.poll) clearInterval(S.poll);
+  S.poll = setInterval(pollLeague, 1500);
+  startClock();
+}
+
+/* ---------------------------- ROOM ---------------------------- */
+function renderRoom(){
+  const l = S.league;
+  const me = l.members[S.me.id];
+  root.innerHTML = `
+  <div class="topbar">
+    <div class="brand"><div class="mark">⚽</div><span class="disp" style="font-size:18px;">${l.formatLabel}</span>
+      <span class="pill mono" style="cursor:pointer;" onclick="copyCode()" title="Click to copy">CODE ${l.code} 📋</span></div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="pill">🟢 ${Object.keys(l.members).length} in league</span>
+      <span class="pill">👤 ${S.me.name}${isHost()?' · HOST':''}</span>
+      <button class="btn btn-ghost" style="padding:8px 12px;" onclick="toggleSound()">${S.soundOn?'🔊':'🔇'}</button>
+      <button class="btn btn-ghost" style="padding:8px 12px;" onclick="leaveRoom()">Exit</button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="tabs">
+      ${tabBtn('auction', l.status==='running'? '<span class="live-dot"></span>Auction · LIVE' : '🏟 Auction')}
+      ${tabBtn('dashboard','📊 My Dashboard')}
+      ${tabBtn('squads','🧩 Squads & Pitch')}
+      ${tabBtn('players','🔍 Player Database')}
+      ${tabBtn('history','📜 History')}
+      ${tabBtn('chat','💬 Chat')}
+      ${l.status==='ended'? tabBtn('summary', reviewRemaining(l)>0? '🔒 Summary':'🏆 Summary'):''}
+      ${isHost()? tabBtn('host','⚙ Host Controls'):''}
+    </div>
+    <div id="tabContent" class="fade-in"></div>
+  </div>`;
+  const box = document.getElementById('tabContent');
+  if(S.tab==='auction') box.innerHTML = viewAuction(l, me);
+  else if(S.tab==='dashboard') box.innerHTML = viewDashboard(l, me);
+  else if(S.tab==='squads') box.innerHTML = viewSquads(l);
+  else if(S.tab==='players') box.innerHTML = viewPlayers(l);
+  else if(S.tab==='history') box.innerHTML = viewHistory(l);
+  else if(S.tab==='chat') box.innerHTML = viewChat(l);
+  else if(S.tab==='summary') box.innerHTML = viewSummary(l);
+  else if(S.tab==='host') box.innerHTML = viewHost(l);
+  wireTabExtras(l);
+}
+function tabBtn(key,label){ return `<div class="tab ${S.tab===key?'active':''}" onclick="setTab('${key}')">${label}</div>`; }
+function setTab(k){ S.tab=k; render(); }
+function toggleSound(){ S.soundOn=!S.soundOn; render(); }
+function copyCode(){
+  navigator.clipboard?.writeText(S.code).then(()=>toast('Invite code copied: '+S.code)).catch(()=>toast('Invite code: '+S.code));
+}
+function leaveRoom(){
+  if(S.poll) clearInterval(S.poll); stopClock();
+  S.screen='lobby'; S.code=null; S.league=null;
+  clearSession().then(()=>{ if(S.me) sSet('session', {id:S.me.id, name:S.me.name, code:null}, false); });
+  render();
+}
+// Lets a manager leave the league entirely before the auction starts. Only available in the
+// waiting room — once bidding is underway, budgets/squads are in motion and leaving would be
+// disruptive, so members should use "Exit" (which just steps away, still counted as a member)
+// instead. Handles a graceful handoff if the person leaving happens to be the host.
+async function leaveLeagueForGood(){
+  if(!S.league || S.league.status!=='waiting') return toast('You can only leave before the auction starts.');
+  if(!confirm("Leave this league for good? You'll be removed from the member list.")) return;
+  const myId = S.me.id;
+  let newHostName = null;
+  await saveLeague(l=>{
+    if(l.status!=='waiting') return; // safety net in case the auction started in the meantime
+    const me = l.members[myId];
+    if(!me) return;
+    const wasHost = l.hostId === myId;
+    delete l.members[myId];
+    l.chat.push({sys:true, text:`${me.name} left the league.`, ts:Date.now()});
+    if(wasHost){
+      const remaining = Object.values(l.members);
+      if(remaining.length>0){
+        l.hostId = remaining[0].id;
+        newHostName = remaining[0].name;
+        l.chat.push({sys:true, text:`👑 ${remaining[0].name} is now the host.`, ts:Date.now()});
+      }
+    }
+  });
+  toast(newHostName? `You left the league. ${newHostName} is now hosting.` : 'You left the league.');
+  leaveRoom();
+}
+
+function soldBannerHtml(sale){
+  if(!sale) return '';
+  return `<div class="glass" style="padding:10px 14px;margin-bottom:14px;border-color:${sale.unsold?'var(--crimson)':'var(--emerald)'};animation:pop .4s ease both;">
+    ${sale.unsold
+      ? `<span style="color:#ff9d9d;">🚫 ${sale.playerName} went unsold — no bids.</span>`
+      : `<span style="color:#7fe6c1;">✅ <b>${sale.playerName}</b> SOLD to <b style="color:var(--gold-soft);">${sale.buyerName}</b> for <b>${fmt(sale.price)}</b></span>`}
+  </div>`;
+}
+function viewAuction(l, me){
+  const p = l.currentPlayerId? PLAYERS.find(x=>x.id===l.currentPlayerId): null;
+  const memberList = Object.values(l.members);
+  const remaining = remainingSeconds(l);
+  const pct = p? Math.min(100, Math.round((remaining/l.timerLen)*100)) : 0;
+  const ringColor = remaining<=5? 'var(--crimson)': remaining<=10? 'var(--gold)':'var(--emerald)';
+  if(l.status==='waiting'){
+    return `<div class="glass" style="padding:40px;text-align:center;">
+      <div class="disp" style="font-size:24px;color:var(--gold-soft);">WAITING ROOM</div>
+      <div style="margin:16px auto;max-width:420px;padding:16px;border-radius:14px;background:rgba(212,175,55,.08);border:1px solid var(--line);">
+        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">Invite code</div>
+        <div class="disp mono" style="font-size:34px;color:var(--gold);letter-spacing:.12em;">${l.code}</div>
+        <button class="btn btn-gold" style="margin-top:8px;" onclick="copyCode()">Copy Code</button>
+        <p style="color:var(--muted);font-size:12.5px;margin-top:10px;line-height:1.5;">Send your friends the link to this page (use Claude's Share button) and this code. They open the link, enter their name, choose <b>Join a League</b>, and type in <b>${l.code}</b>.</p>
+      </div>
+      <p style="color:var(--muted);">${memberList.length} manager(s) joined so far.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0;">
+        ${memberList.map(m=>`<div class="pill">🟢 ${m.name}${m.id===l.hostId?' 👑':''}${m.spectator?' (spectator)':''}</div>`).join('')}
+      </div>
+      ${isHost()? `<button class="btn btn-gold" onclick="hostStartAuction()">Start Auction</button>`: `<div style="color:var(--muted);">Waiting for host to start…</div>`}
+      <div style="margin-top:14px;">
+        <button class="btn btn-ghost" style="border-color:var(--crimson);color:#ff9d9d;" onclick="leaveLeagueForGood()">🚪 Leave League</button>
+      </div>
+    </div>`;
+  }
+  if(l.status==='ended'){
+    const revRem = reviewRemaining(l);
+    return `<div class="glass" style="padding:40px;text-align:center;">
+      <div class="disp" style="font-size:26px;color:var(--gold-soft);">🏁 AUCTION COMPLETE</div>
+      ${revRem>0? `
+        <p style="color:var(--muted);max-width:440px;margin:10px auto;">Go set your formation and lineup on the <b>Squads & Pitch</b> tab — the summary and awards reveal automatically when the clock hits zero.</p>
+        <div class="disp mono" style="font-size:40px;color:var(--gold);margin:14px 0;">${fmtClock(revRem)}</div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-gold" onclick="setTab('squads')">Set My Lineup</button>
+          ${isHost()? `<button class="btn btn-ghost" onclick="hostRevealSummaryNow()">Reveal Summary Now</button>`:''}
+        </div>`
+        : `<p style="color:var(--muted);">Check the Summary tab for full results, ratings, and awards.</p>
+        <button class="btn btn-gold" onclick="setTab('summary')">View Summary</button>`}
+    </div>`;
+  }
+  if(!p){
+    if(l.awaitingIntermission){
+      const remIntermission = phaseRemainingSeconds(l);
+      return `<div class="glass fade-in" style="padding:48px;text-align:center;">
+        ${soldBannerHtml(l.lastSale)}
+        <div class="disp" id="intermissionCountdown" style="font-size:18px;color:var(--gold-soft);margin-top:18px;">Next player in ${remIntermission}s…</div>
+      </div>`;
+    }
+    if(l.awaitingHostPick){
+      const remPick = phaseRemainingSeconds(l);
+      return `<div class="glass fade-in" style="padding:48px;text-align:center;">
+        <div class="disp" style="font-size:20px;color:var(--gold-soft);">🎯 HOST IS CHOOSING THE NEXT PLAYER</div>
+        <div class="disp mono" id="hostPickWaitCountdown" style="font-size:40px;color:var(--gold);margin:14px 0;">${remPick}s</div>
+        <p style="color:var(--muted);">${isHost()? "Head to the Host tab to type a player's name, or wait and one will be auto-picked.":"Sit tight — a player will go up for auction shortly."}</p>
+      </div>`;
+    }
+    return `<div class="glass" style="padding:40px;text-align:center;"><div class="disp" style="color:var(--gold-soft);">No players left in the pool.</div></div>`;
+  }
+  if(l.awaitingReady){
+    const active = Object.values(l.members).filter(m=>!m.spectator);
+    const needed = Math.floor(active.length/2)+1;
+    const votes = (l.readyVotes||[]).filter(id=>l.members[id] && !l.members[id].spectator);
+    const notInterested = (l.notInterested||[]).filter(id=>l.members[id] && !l.members[id].spectator);
+    const iAmReady = me && votes.includes(me.id) && !notInterested.includes(me.id);
+    const iAmNotInterested = me && notInterested.includes(me.id);
+    return `<div class="glass fade-in" style="padding:40px;text-align:center;">
+      <div class="fut-card" style="margin:0 auto 20px;">
+        <div class="fut-card-sheen"></div>
+        <div class="fut-rating">${p.rating}</div>
+        <div class="fut-pos">${p.detailPos}</div>
+        <div class="fut-portrait"><div class="avatar" style="background:linear-gradient(135deg,#232326,#141416);width:78px;height:78px;font-size:24px;margin:0 auto;">${playerIcon(p,78)}</div></div>
+        <div class="fut-flagclub">${p.flag} <span class="fut-club-badge">${p.club.slice(0,3).toUpperCase()}</span></div>
+        <div class="fut-rarity ${rarityInfo(p.cat).cls}">${rarityInfo(p.cat).tag}</div>
+      </div>
+      <div class="disp" style="font-size:22px;color:var(--gold-soft);">${p.name}</div>
+      <p style="color:var(--muted);max-width:420px;margin:8px auto 18px;">Bidding starts once a majority of managers say they're ready (or say they're sitting this one out) — <b style="color:var(--white);">${votes.length}/${needed}</b> needed.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px;">
+        ${active.map(m=>{
+          if(notInterested.includes(m.id)) return `<span class="pill" style="border-color:var(--muted);color:var(--muted);">🙅 ${m.name}</span>`;
+          if(votes.includes(m.id)) return `<span class="pill" style="border-color:var(--emerald);color:#7fe6c1;">✅ ${m.name}</span>`;
+          return `<span class="pill">⏳ ${m.name}</span>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        ${(me && !me.spectator)? `<button class="btn ${iAmReady?'btn-green':'btn-gold'}" onclick="toggleReady()">${iAmReady? "✅ You're Ready" : "I'm Ready"}</button>`:''}
+        ${(me && !me.spectator)? `<button class="btn ${iAmNotInterested?'btn-danger':'btn-ghost'}" onclick="toggleNotInterested()" title="Say you don't want to bid on this player">${iAmNotInterested? "🙅 Sitting This Out" : "🙅 Not Interested"}</button>`:''}
+        ${isHost()? `<button class="btn btn-ghost" onclick="hostForceStartBidding()">⚡ Force Start</button>`:''}
+      </div>
+    </div>`;
+  }
+  const highBidderName = l.currentBidder? l.members[l.currentBidder].name : '—';
+  const outList = l.outForCurrentPlayer || [];
+  const iAmOut = me && outList.includes(me.id);
+  const canBid = me && !me.spectator && l.status==='running' && !iAmOut;
+  return `
+  <div class="grid" style="grid-template-columns:2fr 1fr;gap:18px;align-items:start;">
+    <div class="glass fade-in" style="padding:26px;">
+      ${l.status==='paused'?'<div class="pill" style="background:rgba(225,75,75,.15);border-color:var(--crimson);color:#ff9d9d;margin-bottom:12px;">⏸ PAUSED BY HOST</div>':''}
+      ${soldBannerHtml(l.lastSale)}
+      <div class="on-block-ribbon">🔨 ON THE BLOCK</div>
+      <div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;">
+        <div class="fut-card" onmousemove="tiltCard(event,this)" onmouseleave="resetTilt(this)">
+          <div class="fut-card-sheen"></div>
+          <div class="fut-rating">${p.rating}</div>
+          <div class="fut-pos">${p.detailPos}</div>
+          <div class="fut-portrait">
+            <div class="spotlight-glow"></div>
+            <div class="avatar float" style="background:linear-gradient(135deg,#232326,#141416);width:78px;height:78px;font-size:24px;margin:0 auto;">${playerIcon(p,78)}</div>
+          </div>
+          <div class="fut-flagclub">${p.flag} <span class="fut-club-badge">${p.club.slice(0,3).toUpperCase()}</span></div>
+          <div class="fut-rarity ${rarityInfo(p.cat).cls}">${rarityInfo(p.cat).tag}</div>
+        </div>
+        <div style="flex:1;min-width:220px;">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div class="disp" style="font-size:26px;">${p.name}</div>
+            <span id="timerBadge" class="pill mono ${remaining<=5?'pulse-red-timer':''}" style="border-color:${ringColor};color:${ringColor};font-weight:800;">⏱ ${remaining}s</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin:6px 0;flex-wrap:wrap;">
+            <span class="badge ${ratingClass(p.pos)}">${p.detailPos}</span>
+            <span class="pill">${p.flag} ${p.nation}</span>
+            <span class="pill">${p.club}</span>
+            <span class="pill mono" style="color:var(--gold-soft);">OVR ${p.rating}</span>
+          </div>
+          <div style="color:var(--muted);font-size:13px;">Age ${p.age} · ${p.foot} foot · ${p.height}cm · Value ${fmt(p.value)}${p.rating>=90?' · <span style="color:var(--gold-soft);">🔥 Elite</span>':''}</div>
+          ${attrBarsHtml(synthAttrs(p))}
+        </div>
+      </div>
+      <div style="display:flex;gap:24px;align-items:center;margin-top:22px;">
+        <div class="timer-ring" id="timerRing">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" stroke="rgba(255,255,255,.08)" stroke-width="10" fill="none"/>
+            <circle id="timerRingCircle" cx="60" cy="60" r="52" stroke="${ringColor}" stroke-width="10" fill="none"
+              stroke-dasharray="${2*Math.PI*52}" stroke-dashoffset="${2*Math.PI*52*(1-pct/100)}"
+              stroke-linecap="round" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1s linear;"/>
+          </svg>
+          <div id="timerRingText" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Anton';font-size:30px;color:${ringColor};">${remaining}</div>
+        </div>
+        <div>
+          <div style="color:var(--muted);font-size:12px;text-transform:uppercase;">${l.currentBidder?'Current Bid':'Starting Price'}</div>
+          ${(isHost() && !l.currentBidder && S.editingStartPrice) ? `
+            <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
+              <input id="startPriceIn" type="number" value="${l.currentBid}" step="1000000" style="max-width:160px;"/>
+              <button class="btn btn-gold" style="padding:8px 14px;" onclick="submitStartPrice()">Set</button>
+              <button class="btn btn-ghost" style="padding:8px 14px;" onclick="S.editingStartPrice=false; render();">Cancel</button>
+            </div>`
+          : `<div style="display:flex;align-items:center;gap:10px;">
+              <div id="currentBidAmt" class="disp" style="font-size:34px;color:var(--gold-soft);">${fmt(l.currentBid)}</div>
+              ${(isHost() && !l.currentBidder)? `<button class="btn btn-ghost" style="padding:5px 10px;font-size:12px;" onclick="S.editingStartPrice=true; render();">✏️ Edit</button>`:''}
+            </div>`}
+          <div style="font-size:13px;color:var(--muted);margin-top:2px;">by <b style="color:var(--white);">${highBidderName}</b></div>
+        </div>
+      </div>
+      ${iAmOut? `<div class="pill" style="margin-top:14px;background:rgba(225,75,75,.12);border-color:var(--crimson);color:#ff9d9d;">✋ You're out on this player — others can keep bidding until the timer runs out.</div>`:''}
+      <div style="margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;">
+        ${[1,5,10,25].map(v=>`<button class="btn" ${!canBid?'disabled':''} onclick="quickBid(${v*M})">+${fmt(v*M)}</button>`).join('')}
+        <button class="btn btn-ghost" ${!canBid?'disabled':''} onclick="openCustomBid(${l.currentBid})">Custom Bid</button>
+        <button class="btn btn-green" ${!canBid?'disabled':''} onclick="allIn()">All-In</button>
+        <button class="btn btn-danger" ${(!canBid||iAmOut)?'disabled':''} onclick="this.disabled=true;optOut()">✋ Out</button>
+        ${isHost()? `<button class="btn btn-ghost" style="border-color:var(--gold-dim);" onclick="this.disabled=true;hostSkipToFive()" title="Fast-forward to the final 5 seconds">⏩ Final 5s</button>`:''}
+      </div>
+      <div id="customBidBox"></div>
+    </div>
+    <div class="glass fade-in" style="padding:20px;">
+      <div class="disp" style="font-size:15px;color:var(--gold-soft);margin-bottom:10px;">🏆 BID HISTORY</div>
+      <div class="scrolly">
+        ${(l.bidHistory.length? l.bidHistory: []).map((b,i)=>`<div class="bidrow"><span>${['🥇','🥈','🥉'][i]||'▫️'} <span class="mini-avatar">${initials(b.name)}</span> ${b.name}</span><span class="mono" style="color:var(--gold-soft);">${fmt(b.amount)}</span></div>`).join('') || '<div style="color:var(--muted);font-size:13px;">No bids yet — be first!</div>'}
+      </div>
+      <div class="disp" style="font-size:15px;color:var(--gold-soft);margin:16px 0 10px;">💰 MANAGER BUDGETS</div>
+      <div class="scrolly">
+        ${Object.values(l.members).map(m=>{
+          const pctLeft = l.budget? Math.max(0,Math.min(100, Math.round((m.budget/l.budget)*100))) : 100;
+          return `<div style="margin-bottom:10px;">
+            <div class="bidrow" style="border:none;padding-bottom:2px;">
+              <span style="display:flex;align-items:center;gap:6px;"><span class="mini-avatar">${initials(m.name)}</span>${m.name}${m.spectator?' 👁':''}${outList.includes(m.id)?' <span style="color:var(--crimson);">(out)</span>':''}</span>
+              <span class="mono">${fmt(m.budget)}</span>
+            </div>
+            <div class="rating-bar" style="height:5px;"><div class="rating-bar-fill" style="width:${pctLeft}%;"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+function quickBid(delta){ placeBid((S.league.currentBid||0)+delta); }
+function allIn(){
+  const me = S.league.members[S.me.id];
+  if(!me) return;
+  placeBid(me.budget);
+}
+function openCustomBid(min){
+  document.getElementById('customBidBox').innerHTML = `
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <input id="customAmt" type="number" placeholder="Enter amount (min ${fmt(min+M)})" style="max-width:260px;"/>
+      <button class="btn btn-gold" onclick="submitCustomBid()">Bid</button>
+    </div>`;
+}
+function submitCustomBid(){
+  const v = parseInt(document.getElementById('customAmt').value);
+  if(!v) return toast('Enter a valid amount.');
+  placeBid(v);
+}
+
+function viewDashboard(l, me){
+  if(!me) return `<div class="glass" style="padding:30px;">You are not a member of this league.</div>`;
+  const squadPlayers = me.squad.map(id=>PLAYERS.find(p=>p.id===id)).filter(Boolean);
+  const avgRating = squadPlayers.length? Math.round(squadPlayers.reduce((a,p)=>a+p.rating,0)/squadPlayers.length):0;
+  const avgAge = squadPlayers.length? Math.round(squadPlayers.reduce((a,p)=>a+(typeof p.age==='number'?p.age:26),0)/squadPlayers.length):0;
+  const teamValue = squadPlayers.reduce((a,p)=>a+p.value,0);
+  const highest = squadPlayers.length? l.soldLog.filter(s=>s.buyerId===me.id).sort((a,b)=>b.price-a.price)[0]:null;
+  const bargain = l.soldLog.filter(s=>s.buyerId===me.id).map(s=>({...s, p:PLAYERS.find(x=>x.id===s.playerId)}))
+      .sort((a,b)=> (a.price - a.p.value) - (b.price-b.p.value))[0];
+  const posCounts = {GK:0,DEF:0,MID:0,FWD:0}; squadPlayers.forEach(p=>posCounts[p.pos]=(posCounts[p.pos]||0)+1);
+  return `
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
+    <div class="statbox"><div class="v">${fmt(me.budget)}</div><div class="l">Remaining Budget</div></div>
+    <div class="statbox"><div class="v">${fmt(me.spent)}</div><div class="l">Total Spent</div></div>
+    <div class="statbox"><div class="v">${squadPlayers.length}/${l.squadSize}</div><div class="l">Squad Filled</div></div>
+    <div class="statbox"><div class="v">${avgRating||'-'}</div><div class="l">Avg Rating</div></div>
+    <div class="statbox"><div class="v">${avgAge||'-'}</div><div class="l">Avg Age</div></div>
+    <div class="statbox"><div class="v">${fmt(teamValue)}</div><div class="l">Team Value</div></div>
+    <div class="statbox"><div class="v">${highest? fmt(highest.price):'-'}</div><div class="l">Highest Signing</div></div>
+    <div class="statbox"><div class="v">${bargain? fmt(bargain.price):'-'}</div><div class="l">Biggest Bargain</div></div>
+  </div>
+  <div class="glass" style="padding:20px;margin-bottom:16px;">
+    <div class="disp" style="font-size:16px;color:var(--gold-soft);margin-bottom:8px;">POSITION BALANCE</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">
+      ${Object.entries(posCounts).map(([k,v])=>`<span class="badge ${ratingClass(k)}">${k}: ${v}</span>`).join('')}
+    </div>
+  </div>
+  <div class="glass" style="padding:20px;">
+    <div class="disp" style="font-size:16px;color:var(--gold-soft);margin-bottom:10px;">MY SQUAD</div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));">
+      ${squadPlayers.length? squadPlayers.map(p=>playerCard(p)).join(''): '<div style="color:var(--muted);">No players signed yet.</div>'}
+    </div>
+  </div>`;
+}
+function playerCard(p){
+  return `<div class="glass" style="padding:14px;display:flex;gap:12px;align-items:center;">
+    <div class="avatar" style="width:48px;height:48px;font-size:14px;">${playerIcon(p,48)}</div>
+    <div>
+      <div style="font-weight:700;font-size:14px;">${p.name}</div>
+      <div style="font-size:12px;color:var(--muted);">${p.flag} ${p.club} · <span class="badge ${ratingClass(p.pos)}">${p.detailPos}</span> OVR ${p.rating}</div>
+    </div>
+  </div>`;
+}
+
+function viewSquads(l){
+  const members = Object.values(l.members).filter(m=>!m.spectator);
+  const target = members.find(m=>m.id===S.squadSel) || members[0];
+  const isMine = !!(target && target.id===S.me.id);
+  let squadListHtml = '<div style="color:var(--muted);font-size:12px;">No managers yet.</div>';
+  if(target){
+    const { slots } = computeLineup(target,l);
+    const placedLabel = {};
+    slots.forEach(s=>{ if(s.playerId) placedLabel[s.playerId] = s.label; });
+    const squadPlayers = target.squad.map(id=>PLAYERS.find(p=>p.id===id)).filter(Boolean);
+    squadListHtml = squadPlayers.length? squadPlayers.map(p=>{
+      const lab = placedLabel[p.id];
+      return `<div class="bench-chip" ${isMine?`draggable="true" ondragstart="onBenchDragStart(event,'${p.id}')"`:''}
+        title="${p.name} · OVR ${p.rating}" style="width:100%;justify-content:space-between;margin-bottom:6px;${isMine?'cursor:grab;':''}${lab?'opacity:.55;':''}">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><span class="badge ${ratingClass(p.pos)}" style="margin-right:8px;">${p.detailPos}</span>${p.name}</span>
+        ${lab? `<span class="pill mono" style="font-size:10px;flex-shrink:0;margin-left:6px;">${lab}</span>` : ''}
+      </div>`;
+    }).join('') : '<div style="color:var(--muted);font-size:12px;">No players yet — win some in the auction!</div>';
+  }
+  return `<div class="grid" style="grid-template-columns:220px 1fr;gap:16px;">
+    <div>
+      <div class="glass" style="padding:14px;margin-bottom:14px;">
+        <div class="disp" style="font-size:14px;color:var(--gold-soft);margin-bottom:8px;">MANAGERS</div>
+        ${members.map(m=>`<div class="tab ${target && target.id===m.id?'active':''}" style="margin-bottom:6px;" onclick="selSquad('${m.id}')">${m.name}</div>`).join('')}
+      </div>
+      <div class="glass" style="padding:14px;" ${isMine? `ondragover="event.preventDefault()" ondrop="onBenchDrop(event)"`:''}>
+        <div class="disp" style="font-size:14px;color:var(--gold-soft);margin-bottom:4px;">SQUAD</div>
+        ${isMine? `<div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Drag a name onto a pitch slot to play them there.</div>`:''}
+        ${squadListHtml}
+      </div>
+    </div>
+    <div id="pitchBox"></div>
+  </div>`;
+}
+function selSquad(id){ S.squadSel=id; render(); }
+function wireTabExtras(l){
+  if(S.tab==='squads'){
+    const members = Object.values(l.members).filter(m=>!m.spectator);
+    const target = members.find(m=>m.id===S.squadSel) || members[0];
+    document.getElementById('pitchBox').innerHTML = target? renderPitch(target,l): '<div class="glass" style="padding:24px;">No managers yet.</div>';
+  }
+  if(S.tab==='players'){
+    document.getElementById('playerSearch')?.addEventListener('input', filterPlayers);
+    document.getElementById('posFilter')?.addEventListener('change', filterPlayers);
+    document.getElementById('catFilter')?.addEventListener('change', filterPlayers);
+  }
+  if(S.tab==='chat'){
+    const box=document.getElementById('chatScroll'); if(box) box.scrollTop=box.scrollHeight;
+    document.getElementById('chatInput')?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ sendChat(e.target.value); e.target.value=''; } });
+  }
+}
+function renderPitch(m,l,mini){
+  const { slots, extras, rows } = computeLineup(m,l);
+  const formation = m.formation || defaultFormation(l.formatKey, l.squadSize);
+  const k = rows.length;
+  const yTop=14, yBottom=72;
+  const isMine = !mini && m.id===S.me.id;
+  function chip(slot){
+    const p = slot.playerId? PLAYERS.find(x=>x.id===slot.playerId): null;
+    const last = p? p.name.replace(/\s*\(.*\)/,'').split(' ').slice(-1)[0] : null;
+    if(isMine && S.openSlot===slot.key){
+      const squadPlayers = m.squad.map(id=>PLAYERS.find(x=>x.id===id)).filter(Boolean);
+      return `<div class="slot-label">${slot.label}</div>
+        <select class="slot-select" autofocus onchange="assignSlot('${slot.key}', this.value)" onblur="closeSlotEditor()">
+          <option value="">– empty –</option>
+          ${squadPlayers.map(sp=>`<option value="${sp.id}" ${sp.id===slot.playerId?'selected':''}>${sp.name.length>16?sp.name.slice(0,15)+'…':sp.name} (${sp.pos})</option>`).join('')}
+        </select>`;
+    }
+    const clickAttr = isMine? `onclick="openSlotEditor('${slot.key}')" style="cursor:pointer;"` : '';
+    const dragAttr = (isMine && p)? `draggable="true" ondragstart="onSlotDragStart(event,'${p.id}','${slot.key}')"` : '';
+    return `<div class="slot-label">${slot.label}</div>
+      <div class="dot" ${clickAttr} ${dragAttr} title="${p?p.name+' · OVR '+p.rating+' — drag to move, click to change':(isMine?'Click or drag a squad player here':'Empty slot')}" style="${p?'':'background:rgba(255,255,255,.06);border:2px dashed rgba(255,255,255,.35);color:rgba(255,255,255,.45);'}">${p?playerIcon(p,40):(isMine?'+':'–')}</div>
+      <div class="slot-name">${p?last:(isMine?'assign':'empty')}</div>`;
+  }
+  let html='';
+  const gkSlot = slots.find(s=>s.key==='gk');
+  const dropAttrs = isMine? (key)=>`ondragover="event.preventDefault()" ondrop="onSlotDrop(event,'${key}')"` : ()=>'';
+  slots.filter(s=>s.key!=='gk').forEach(slot=>{
+    const y = k>1? yBottom - slot.row*((yBottom-yTop)/(k-1)) : (yTop+yBottom)/2;
+    const rowLen = rows[slot.row].length;
+    const x = ((slot.col+1)/(rowLen+1))*100;
+    const wide = (isMine && S.openSlot===slot.key);
+    html += `<div class="player-chip" ${dropAttrs(slot.key)} style="left:${x}%;top:${y}%;${mini?'width:56px;':''}${wide?'width:96px;z-index:5;':''}">${chip(slot)}</div>`;
+  });
+  const gkWide = isMine && S.openSlot==='gk';
+  html += `<div class="player-chip" ${dropAttrs('gk')} style="left:50%;top:90%;${mini?'width:56px;':''}${gkWide?'width:96px;z-index:5;':''}">${chip(gkSlot)}</div>`;
+  return `<div class="glass" style="padding:${mini?'12px':'16px'};">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+      <div class="disp" style="font-size:${mini?13:15}px;color:var(--gold-soft);">${m.name}${m.id===l.hostId?' 👑':''} — ${formation}</div>
+      ${isMine? formationSelectorHtml(m,l): ''}
+    </div>
+    <div class="pitch" style="${mini?'min-height:300px;':''}">${html}</div>
+    ${isMine? `<div style="margin-top:10px;font-size:11px;color:var(--muted);">Drag a name from the SQUAD list onto a slot, or click a slot to pick from a list.</div>`:''}
+    <div style="margin-top:10px;color:var(--muted);font-size:${mini?11:12}px;">${m.squad.length}/${l.squadSize} players · ${fmt(m.budget)} left</div>
+  </div>`;
+}
+function formationSelectorHtml(m,l){
+  const opts = formationSetFor(l.formatKey, l.squadSize);
+  const current = m.formation || defaultFormation(l.formatKey, l.squadSize);
+  return `<select style="width:auto;min-width:130px;" onchange="setFormation(this.value)">
+    ${opts.map(f=>`<option value="${f}" ${f===current?'selected':''}>${f}</option>`).join('')}
+  </select>`;
+}
+function openSlotEditor(key){ S.openSlot = key; render(); }
+function closeSlotEditor(){ S.openSlot = null; render(); }
+function onBenchDragStart(event, playerId){
+  event.dataTransfer.setData('text/plain', JSON.stringify({playerId, fromSlot:null}));
+  event.dataTransfer.effectAllowed = 'move';
+}
+function onSlotDragStart(event, playerId, fromSlot){
+  event.dataTransfer.setData('text/plain', JSON.stringify({playerId, fromSlot}));
+  event.dataTransfer.effectAllowed = 'move';
+}
+function onSlotDrop(event, toSlotKey){
+  event.preventDefault();
+  let data; try{ data = JSON.parse(event.dataTransfer.getData('text/plain')); }catch(e){ return; }
+  if(!data || !data.playerId) return;
+  assignSlot(toSlotKey, data.playerId);
+}
+function onBenchDrop(event){
+  event.preventDefault();
+  let data; try{ data = JSON.parse(event.dataTransfer.getData('text/plain')); }catch(e){ return; }
+  if(data && data.fromSlot) assignSlot(data.fromSlot, '');
+}
+async function assignSlot(slotKey, playerId){
+  S.openSlot = null;
+  await saveLeague(l=>{
+    const m = l.members[S.me.id]; if(!m) return;
+    m.lineup = m.lineup || {};
+    if(playerId) m.lineup[slotKey] = playerId; else delete m.lineup[slotKey];
+    // clear this player from any other slot so nobody appears twice
+    Object.keys(m.lineup).forEach(k=>{ if(k!==slotKey && m.lineup[k]===playerId) delete m.lineup[k]; });
+  });
+}
+async function setFormation(f){
+  await saveLeague(l=>{ if(l.members[S.me.id]) l.members[S.me.id].formation = f; });
+  toast('Formation set to '+f);
+}
+
+function viewPlayers(l){
+  return `
+  <div class="glass" style="padding:16px;margin-bottom:14px;">
+    <div class="grid" style="grid-template-columns:2fr 1fr 1fr;gap:10px;">
+      <input id="playerSearch" placeholder="Search by name, club, nation…"/>
+      <select id="posFilter"><option value="">All Positions</option><option>GK</option><option>DEF</option><option>MID</option><option>FWD</option></select>
+      <select id="catFilter"><option value="">All Categories</option>${[...new Set(PLAYERS.map(p=>p.cat))].map(c=>`<option>${c}</option>`).join('')}</select>
+    </div>
+  </div>
+  <div id="playerGrid" class="grid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr));"></div>`;
+}
+function filterPlayers(){
+  const q = (document.getElementById('playerSearch').value||'').toLowerCase();
+  const pos = document.getElementById('posFilter').value;
+  const cat = document.getElementById('catFilter').value;
+  const list = PLAYERS.filter(p=>
+    (!q || p.name.toLowerCase().includes(q) || p.club.toLowerCase().includes(q) || p.nation.toLowerCase().includes(q)) &&
+    (!pos || p.pos===pos) && (!cat || p.cat===cat));
+  document.getElementById('playerGrid').innerHTML = list.slice(0,120).map(p=>`
+    <div class="glass" style="padding:14px;">
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div class="avatar" style="width:46px;height:46px;font-size:13px;">${playerIcon(p,46)}</div>
+        <div style="min-width:0;">
+          <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
+          <div style="font-size:11px;color:var(--muted);">${p.flag} ${p.club}</div>
+        </div>
+      </div>
+      <div class="rating-bar" style="margin-top:10px;"><div class="rating-bar-fill" style="width:${p.rating}%;"></div></div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        <span class="badge ${ratingClass(p.pos)}">${p.detailPos}</span>
+        <span class="pill mono">OVR ${p.rating}</span>
+        <span class="pill">${fmt(p.value)}</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;font-size:11px;color:var(--muted);">
+        <span>Age ${p.age}</span><span>·</span><span>${p.foot} foot</span><span>·</span><span>${p.height}cm</span>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--gold-soft);">Opens at ${fmt(p.start)} · ${p.cat}</div>
+    </div>`).join('') || '<div style="color:var(--muted);">No players match.</div>';
+}
+setTimeout(()=>{ if(S.tab==='players') filterPlayers(); },0);
+
+function viewHistory(l){
+  const rows = [...l.soldLog].reverse().map(s=>{
+    const p=PLAYERS.find(x=>x.id===s.playerId); const buyer=l.members[s.buyerId];
+    return `<div class="bidrow"><span>${p?p.name:'?'} <span style="color:var(--muted);">→ ${buyer?buyer.name:'?'}</span></span><span class="mono" style="color:var(--gold-soft);">${fmt(s.price)}</span></div>`;
+  }).join('');
+  return `<div class="glass" style="padding:20px;">
+    <div class="disp" style="font-size:16px;color:var(--gold-soft);margin-bottom:10px;">AUCTION HISTORY (${l.soldLog.length} sold)</div>
+    ${rows || '<div style="color:var(--muted);">No completed sales yet.</div>'}
+  </div>`;
+}
+
+function viewChat(l){
+  return `<div class="glass" style="padding:16px;display:flex;flex-direction:column;height:460px;">
+    <div id="chatScroll" style="flex:1;overflow-y:auto;padding-right:6px;">
+      ${l.chat.map(c=> c.sys? `<div style="text-align:center;color:var(--muted);font-size:12px;margin:8px 0;">— ${c.text} —</div>`
+        : `<div style="margin:8px 0;"><b style="color:var(--gold-soft);">${c.name}${c.uid===S.me.id?' (you)':''}:</b> ${escapeHtml(c.text)}</div>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <input id="chatInput" placeholder="Say something to the league…"/>
+      <button class="btn btn-gold" onclick="const i=document.getElementById('chatInput'); sendChat(i.value); i.value='';">Send</button>
+    </div>
+  </div>`;
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function viewSummary(l){
+  const revRem = reviewRemaining(l);
+  if(revRem>0){
+    return `<div class="glass" style="padding:40px;text-align:center;">
+      <div class="disp" style="font-size:22px;color:var(--gold-soft);">🔒 SUMMARY LOCKED</div>
+      <p style="color:var(--muted);max-width:440px;margin:10px auto;">Everyone gets a chance to set their formation and lineup first. Reveals in:</p>
+      <div class="disp mono" style="font-size:40px;color:var(--gold);margin:14px 0;">${fmtClock(revRem)}</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-gold" onclick="setTab('squads')">Set My Lineup</button>
+        ${isHost()? `<button class="btn btn-ghost" onclick="hostRevealSummaryNow()">Reveal Summary Now</button>`:''}
+      </div>
+    </div>`;
+  }
+  const members = Object.values(l.members).filter(m=>!m.spectator);
+  const scored = members.map(m=>{
+    const sq = m.squad.map(id=>PLAYERS.find(p=>p.id===id)).filter(Boolean);
+    const { slots } = computeLineup(m,l);
+    const gkSlot = slots.find(s=>s.key==='gk');
+    const fwdSlots = slots.filter(s=>s.bucket==='FWD');
+    const midSlots = slots.filter(s=>s.bucket==='MID');
+    const defSlots = slots.filter(s=>s.bucket==='DEF');
+    // Rating for a line = sum of assigned players' OVR ÷ number of positions in that line
+    // (an empty slot contributes 0, which rewards actually completing your lineup).
+    function lineRating(slotArr){
+      if(!slotArr.length) return 0;
+      const sum = slotArr.reduce((a,s)=>{ const p=s.playerId? PLAYERS.find(x=>x.id===s.playerId): null; return a+(p?p.rating:0); },0);
+      return sum/slotArr.length;
+    }
+    const attack = lineRating(fwdSlots);
+    const mid = lineRating(midSlots);
+    const def = lineRating([...defSlots, gkSlot]); // defence includes the goalkeeper
+    const depth = Math.min(100, Math.round((sq.length/l.squadSize)*100));
+    const chemistry = Math.round(60 + Math.min(30, sq.length*2));
+    const spendEff = m.spent>0? Math.min(100, Math.round((sq.reduce((a,p)=>a+p.value,0)/m.spent)*40)) : 50;
+    const overall = Math.round((attack+mid+def)/3*0.6 + depth*0.15 + chemistry*0.15 + spendEff*0.1);
+    return {m, sq, attack:Math.round(attack), mid:Math.round(mid), def:Math.round(def), depth, chemistry, spendEff, overall};
+  }).sort((a,b)=>b.overall-a.overall);
+
+  const awards = [];
+  if(l.soldLog.length){
+    const priciest = [...l.soldLog].sort((a,b)=>b.price-a.price)[0];
+    awards.push({icon:'💸', title:'Most Expensive Signing', text:`${PLAYERS.find(p=>p.id===priciest.playerId).name} — ${fmt(priciest.price)} (${l.members[priciest.buyerId].name})`});
+    const bargains = l.soldLog.map(s=>({...s,p:PLAYERS.find(x=>x.id===s.playerId)})).sort((a,b)=>(a.price-a.p.value)-(b.price-b.p.value))[0];
+    awards.push({icon:'💰', title:'Biggest Bargain', text:`${bargains.p.name} — ${fmt(bargains.price)} (${l.members[bargains.buyerId].name})`});
+  }
+  if(scored.length){
+    awards.push({icon:'👑', title:'Auction Champion', text:`${scored[0].m.name} — Overall rating ${scored[0].overall}/100`});
+    const bestAtk=[...scored].sort((a,b)=>b.attack-a.attack)[0]; awards.push({icon:'🔥', title:'Best Attack', text:`${bestAtk.m.name} — ${bestAtk.attack} ATT`});
+    const bestDef=[...scored].sort((a,b)=>b.def-a.def)[0]; awards.push({icon:'🛡', title:'Best Defense', text:`${bestDef.m.name} — ${bestDef.def} DEF`});
+    const bestMid=[...scored].sort((a,b)=>b.mid-a.mid)[0]; awards.push({icon:'🎯', title:'Best Midfield', text:`${bestMid.m.name} — ${bestMid.mid} MID`});
+    const richest=[...scored].sort((a,b)=>b.m.budget-a.m.budget)[0]; awards.push({icon:'🧠', title:'Smartest Spending', text:`${richest.m.name} — ${fmt(richest.m.budget)} left unspent`});
+  }
+  return `
+  <div class="glass" style="padding:24px;margin-bottom:16px;">
+    <div class="disp" style="font-size:22px;color:var(--gold-soft);margin-bottom:6px;">🏆 FINAL SUMMARY</div>
+    <p style="color:var(--muted);font-size:14px;">${scored[0]? scored[0].m.name+" built the strongest all-round XI, leading on rating balance across attack, midfield and defense.":"No squads to summarize yet."} ${scored[1]? scored[1].m.name+" wasn't far behind, "+(scored[1].spendEff>scored[0].spendEff? "getting more value per dollar spent.":"but spent less efficiently overall."):''}</p>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-bottom:16px;">
+    ${scored.map((s,i)=>`<div class="glass" style="padding:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-weight:800;">${i===0?'👑 ':''}${s.m.name}</div><div class="disp" style="color:var(--gold-soft);font-size:22px;">${s.overall}</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px;">ATT ${s.attack} · MID ${s.mid} · DEF (incl. GK) ${s.def} · Depth ${s.depth}%</div>
+    </div>`).join('')}
+  </div>
+  <div class="disp" style="font-size:16px;color:var(--gold-soft);margin:16px 0 10px;">FINAL LINEUPS</div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:16px;">
+    ${members.map(m=>renderPitch(m,l,true)).join('')}
+  </div>
+  <div class="disp" style="font-size:16px;color:var(--gold-soft);margin:10px 0;">AWARDS</div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+    ${awards.map(a=>`<div class="award"><div style="font-size:22px;">${a.icon}</div><div style="font-weight:700;margin-top:4px;">${a.title}</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">${a.text}</div></div>`).join('')}
+  </div>`;
+}
+
+function viewHost(l){
+  return `
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="glass" style="padding:20px;">
+      <div class="disp" style="font-size:15px;color:var(--gold-soft);margin-bottom:12px;">AUCTION CONTROLS</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        ${l.status==='waiting'? `<button class="btn btn-gold" onclick="hostStartAuction()">Start Auction</button>`:''}
+        ${l.status==='running'? `<button class="btn" onclick="hostPause()">⏸ Pause</button>`:''}
+        ${l.status==='paused'? `<button class="btn btn-green" onclick="hostResume()">▶ Resume</button>`:''}
+        ${l.status!=='ended' && !l.awaitingHostPick? `<button class="btn" onclick="hostSkip()">⏭ Skip Player</button>`:''}
+        ${l.status==='running' && !l.awaitingReady && !l.awaitingHostPick? `<button class="btn" onclick="this.disabled=true;hostSkipToFive()">⏩ Skip to Final 5s</button>`:''}
+        ${l.status==='running' && l.awaitingReady? `<button class="btn btn-gold" onclick="hostForceStartBidding()">⚡ Force Start Bidding</button>`:''}
+        ${l.status!=='ended'? `<button class="btn" onclick="hostUndo()">↩ Undo Last Sale</button>`:''}
+        ${l.status!=='ended'? `<button class="btn btn-danger" onclick="hostEnd()">⏹ End Auction</button>`:''}
+      </div>
+      ${l.awaitingHostPick? `<div style="margin-top:16px;padding:14px;border-radius:12px;border:1px solid var(--gold);background:rgba(212,175,55,.08);">
+        <label class="small">🎯 CHOOSE THE NEXT PLAYER — <span id="hostPickCountdown" style="color:var(--gold-soft);font-weight:800;">${phaseRemainingSeconds(l)}s</span> LEFT</label>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <input id="hostPickInput" list="allPlayersList" placeholder="Type a player name…"/>
+          <button class="btn btn-gold" style="flex-shrink:0;" onclick="hostSubmitPick()">Put Up</button>
+          <button class="btn" style="flex-shrink:0;" onclick="hostPickRandomNow()">🎲 Auto-pick Now</button>
+        </div>
+        <datalist id="allPlayersList">${PLAYERS.map(p=>`<option value="${p.name}">`).join('')}</datalist>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;">If you don't choose in time, a player is auto-picked from the pool.</div>
+      </div>`:''}
+      ${(l.status==='running' && l.currentPlayerId && !l.awaitingHostPick)? `<div style="margin-top:16px;">
+        <label class="small">🎯 ASSIGN A SPECIFIC PLAYER NEXT</label>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <input id="assignPlayerInput" list="allPlayersList" placeholder="Type a player name…"/>
+          <button class="btn btn-gold" style="flex-shrink:0;" onclick="hostAssignPlayer()">Put Up</button>
+        </div>
+        <datalist id="allPlayersList">${PLAYERS.map(p=>`<option value="${p.name}">`).join('')}</datalist>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;">Overrides the auto-pick and restarts the ready-check for that player.</div>
+      </div>`:''}
+    </div>
+    <div class="glass" style="padding:20px;">
+      <div class="disp" style="font-size:15px;color:var(--gold-soft);margin-bottom:12px;">MANAGERS</div>
+      ${Object.values(l.members).map(m=>`<div class="bidrow"><span>${m.name}${m.id===l.hostId?' 👑':''}</span>
+        <span style="display:flex;gap:6px;">
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px;" onclick="hostAdjustBudget('${m.id}',10000000)">+10M</button>
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px;" onclick="hostAdjustBudget('${m.id}',-10000000)">-10M</button>
+          ${m.id!==l.hostId? `<button class="btn btn-danger" style="padding:4px 8px;font-size:12px;" onclick="hostKick('${m.id}')">Kick</button>`:''}
+        </span></div>`).join('')}
+    </div>
+  </div>
+  <div class="glass" style="padding:20px;margin-top:16px;">
+    <div class="disp" style="font-size:15px;color:var(--gold-soft);margin-bottom:8px;">RULES</div>
+    <div style="color:var(--muted);font-size:13px;">Position restrictions: <b style="color:white;">${l.positionRestrictions?'On':'Off'}</b> · Duplicates: <b style="color:white;">${l.allowDuplicates?'Allowed':'Not allowed'}</b> · Timer: <b style="color:white;">${l.timerLen}s</b> · Squad size: <b style="color:white;">${l.squadSize}</b></div>
+  </div>`;
+}
+
+/* ---------------------------- BOOT ---------------------------- */
+tryResumeSession();
+</script>
